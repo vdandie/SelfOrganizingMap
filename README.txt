@@ -23,8 +23,11 @@ Written by Daniel Swain
 1.1.2 	- 09/30/14
 
 	+ Fixed: RandRecordSet
-		- getLeftovers() 	- was returning completely wrong outputs. FIXED
-		- createTrainingSet	- because getLeftovers() wasn't working, this wasn't either. FIXED
+		- getLeftovers() 	
+			was returning completely wrong outputs. FIXED
+		- createTrainingSet	
+			because getLeftovers() wasn't working,
+			this wasn't either. FIXED
 
 	+ Made SOMEnhanced better:
 		- firstTimeInitialization() is now run()
@@ -32,14 +35,17 @@ Written by Daniel Swain
 		- now accurately prints 10 trainingSets with readable records
 
 	+ Known Bugs:
-		- Need to make the output and trainingSet file numbers the same in every situation so it's easier to find the pairs
-		- When making more than one training set, the records start to come out funny. Training sets 1 and 2 look decent.
+		- Need to make the output and trainingSet file numbers the 
+			same in every situation so it's easier to find the pairs
+		- When making more than one training set, the records start 
+			to come out funny. Training sets 1 and 2 look decent.
 
 1.1.3 	- 10/02/14
 
 	+ Fixed the mysterious winner rule
-		- cleanMatrix()		- Added a feature so that it will now clean the winners that don't have corresponding
-								Records in the Matrix
+		- cleanMatrix()		
+			Added a feature so that it will now clean the winners
+			 that don't have corresponding records in the matrix
 
 	+ Changed the name of:
 		- SelfOrganizingMap =>	AbstractSetCreator
@@ -48,19 +54,54 @@ Written by Daniel Swain
 		- Should be easier to understand now.
 
 	+ TODO:
-		- Build new package containing classes to handle the shooting of the test sets to the chosen training set
+		- Build new package containing classes to handle the
+			shooting of the test sets to the chosen training set
 		
 1.1.4	- 10/05/14
 
 	+ Trying to fix: Multiple TrainingSet Problem
-		- Currently when making multiple training sets, the records change throughout the queues, i.e.
-			the records altered in the previous run are the same records used over again.
+		- Currently when making multiple training sets, the records
+		 	change throughout the queues, i.e. the records altered in 
+		 	the previous run are the same records used over again.
 
 1.1.5	- 10/05/14
 
 	+ Kind of fixed: Multiple TrainingSet Problem
-		- Creating multiple trained sets used to be a problem, and is now fixed by the addition of the resetAlpha() function
-		- Alpha wasn't being reset, therefore the updated values became smaller and smaller
+		- Creating multiple trained sets used to be a problem,
+			 and is now fixed by the addition of the resetAlpha() function
+		- Alpha wasn't being reset, therefore the updated values
+			 became smaller and smaller
 
 	+ New Problem: Duplicates... Again.
-		- Duplicates are showing up again even though being ran through cleanMatrix()
+		- Duplicates are showing up again even though being ran 
+			through cleanMatrix()
+
+1.2.0 	- 10/07/14
+
+	+ Kind of fixed: Certainty Factor/Cover Problem
+		- If a Rule(aka Seed) had it's dominant decision changed
+			it wouldn't count itself as a winner and the cover
+			and certainty factor would be off.
+
+	+ Added functions to: Intersector
+		- (void)read(int) 	
+			// Reads the files of the corresponding int
+		- (void)readTestSetFile(int)	
+			// Reads the test set file of the corresponding int
+		- (void)readTrainingSetFile(int)
+			// Reads the training set file of the corresponding int
+		- (void)run()		
+			// Runs the algorithm
+
+	+ Added functions to: Record
+		-Record(Record,String)
+			// Constructor that creates a record with a name
+
+	+ Still A Problem: Duplicates... Again.
+		- The duplicates seem to be somewhat different from each other
+			therefore are not being caught by the cleanMatrix()
+		- Will ask Dr Hashemi about this.
+
+	+ TODO:
+		- implement run() in Intersector
+		- Do something about the semi-duplicates

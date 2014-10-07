@@ -90,7 +90,7 @@ public class MatrixEnhanced extends Matrix {
 
         sum = count_1 + count_2;
         cover[1] = sum;
-        if (count_1 == 0 && count_2 == 0) {     //If the seed had no winners, return 0
+        if (count_1 == 0 && count_2 == 0) {     //If the seed had no winners, return 1
             return 1.0;
         }
 

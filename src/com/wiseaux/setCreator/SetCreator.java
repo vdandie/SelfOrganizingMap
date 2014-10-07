@@ -176,7 +176,7 @@ public class SetCreator extends AbstractSetCreator {
      */
     public void outputToFile(MatrixEnhanced[] matrices, String name) {
 
-        File output = new File(name);
+        File output = new File(name + 1 + ".txt");
 
         for (MatrixEnhanced matrix : matrices) {
             if(matrix == null) {

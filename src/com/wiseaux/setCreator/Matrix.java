@@ -176,11 +176,11 @@ public class Matrix extends AbstractSetCreator {
             print += recordSet[i].print() + "\n";
         }
         String name = "trainingSet_";
-        File output = new File("trainingSet\\"+name+"1.txt");
+        File output = new File("trainingSets\\"+name+"1.txt");
         try {
             int i = 2;
             while(output.exists()) {
-                output = new File("trainingSet\\"+name + (i++) + ".txt");
+                output = new File("trainingSets\\"+name + (i++) + ".txt");
             }
             output.createNewFile();
 

@@ -8,7 +8,7 @@ import java.util.Queue;
  * This class is responsible for sending records into the given matrix
  *
  * @author Daniel Swain
- * @version 1.1.5
+ * @version 1.2
  * @since 9/04/2014
  */
 public class SetCreatorEnhanced extends SetCreator {
@@ -42,14 +42,15 @@ public class SetCreatorEnhanced extends SetCreator {
      * Puts the testSets into files
      */
     public void testSetsToFiles() {
-        for (int i = 0; i < testSet.length / 2; i++) {
-            testSet[i] = rSet.createQueue(testSet, i);
+           Queue[] temp = new Queue[testSet.length];
+        for (int i = 0; i < temp.length / 2; i++) {
+            temp[i] = rSet.createQueue(testSet, i);
         }
-
+        testSet = temp;
         new File("testSets").mkdir();
 
         for (int i = 0; i < testSet.length / 2; i++) {
-            rSet.printQue(testSet[i], "testSets\\testSet" + i);
+            rSet.printQue(testSet[i], "testSets\\testSet");
         }
     }
 

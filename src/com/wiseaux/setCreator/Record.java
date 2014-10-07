@@ -13,22 +13,28 @@ public final class Record implements Registry {
     protected double[] cover = new double[2];
     protected boolean decisionChanged;
 
-    Record(int length) {
+    public Record(int length) {
         this.registry = new double[length];
     }
 
-    Record(double[] registry) {
+    public Record(double[] registry) {
         this.registry = registry;
     }
 
-    Record(Record record) {
+    public Record(Record record) {
         this.setRegistry(record);
         //this.setName(record.getIntName());
         
     }
 
-    Record(Record record, int name) {
+    public Record(Record record, int name) {
         this.setName(name);
+        this.setRegistry(record);
+    }
+    
+    
+    public Record(Record record, String name) {
+        this.name = name;
         this.setRegistry(record);
     }
 
@@ -242,6 +248,11 @@ public final class Record implements Registry {
             } else {
                 this.setDecision(1);
             }
+            
+            this.cover[0] += 1; // Increase cover so that it still counts itself
+            
+            // Recalculate certainty
+            this.setCertaintyFactor(String.format("%, .2f", ((this.cover[0] / this.cover[1]) * 100)));
         } else
             decisionChanged = false;
     }

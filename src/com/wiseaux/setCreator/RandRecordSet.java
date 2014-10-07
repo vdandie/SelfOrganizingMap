@@ -290,7 +290,7 @@ public class RandRecordSet {
             }
         }
         
-        File output = new File(name);
+        File output = new File(name + 1 + ".txt");
         try {
             
             int i = 1;
