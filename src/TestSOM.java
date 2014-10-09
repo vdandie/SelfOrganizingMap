@@ -15,7 +15,8 @@ public class TestSOM {
         Intersector thing = new Intersector();
         thing.read(10);
         thing.run();
-        thing.resultsToFile("result");
+        //thing.resultsToFile("result");
+        thing.totalResultsFile();
     }
         
 }

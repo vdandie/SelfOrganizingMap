@@ -261,6 +261,44 @@ public class Intersector {
                 System.exit(1);
             }
         }
+    }
     
+    public void totalResultsFile() {
+        File output = new File("results");
+        output.mkdir();
+        
+        output = new File("results\\overall.txt");
+
+        
+            try {
+                int i = 1;
+                while (output.exists()) {
+                    output = new File("results\\overall" + i++ + ".txt");
+                }
+                output.createNewFile();
+
+            } catch (IOException ex) {
+                System.out.print("OutputToFile can't find directory");
+                System.exit(1);
+            }
+
+            try (PrintWriter write = new PrintWriter(output)) {
+
+                write.flush();
+                for(ArrayList<String> line: results) {
+                    if(line == null) {
+                        continue;
+                    }
+                    write.write("\n\n");
+                    write.write(line.get(0));
+                    write.write(line.get(line.size()-1));
+                }
+                write.close();
+
+            } catch (FileNotFoundException e) {
+                System.out.println("Output file not found.");
+                System.exit(1);
+            }
+        
     }
 }

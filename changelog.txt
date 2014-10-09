@@ -121,7 +121,6 @@ Written by Daniel Swain Jr
 
 	+ Implemented run()
 		-Uses runAlgorithm on each of the specified number of sets
-	+ Implemented runAlgorithm()
 
 	+ Changed the name of:
 		- Record.isWinner() => Record.hasSameDecision()
@@ -144,3 +143,9 @@ Written by Daniel Swain Jr
 	+ TODO:
 		- The theres an offset because printing of the files starts at
 			1, not a huge problem, but should go back and fix.
+
+1.2.3 	- 10/09/14
+
+	+Created:
+		-Intersector.totalResultsFile - takes the totals of all tests and
+			puts them in one file called "overall.txt"
