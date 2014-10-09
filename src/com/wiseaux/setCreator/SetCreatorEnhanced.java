@@ -133,7 +133,7 @@ public class SetCreatorEnhanced extends SetCreator {
                 matrix.updateMatrix(record, index, alpha, name);
             } else if (count > 1) { //Find which record it matched and matched decision, update
                 for (int index = 0; index < neighbors.length; index++) {
-                    if (neighbors[index] && matrix.getRecord(index).isWinner(record)) {
+                    if (neighbors[index] && matrix.getRecord(index).hasSameDecision(record)) {
                         int name = matrix.getRecord(index).getIntName();
                         matrix.updateMatrix(record, index, alpha, name);
                     }

@@ -105,3 +105,27 @@ Written by Daniel Swain
 	+ TODO:
 		- implement run() in Intersector
 		- Do something about the semi-duplicates
+
+1.2.1 	- 10/08/14
+	
+	+ Created:
+		- Intersector.runAlgorithm() - Sends each test record against
+			all rules in the trainingSet
+		- Intersector.sumAbsDif() - Returns the sum of the absolute 
+			value differences ofattributes between two given records.
+		- Intersector.times	- Number of files/times to do the algorthim
+		- Intersector.match - A map where the key is the file number
+			and the value is a double array of size 2 containing:
+				1. The # of Matches that came through
+				2. The Size of the TrainingSet
+
+	+ Implemented run()
+		-Uses runAlgorithm on each of the specified number of sets
+	+ Implemented runAlgorithm()
+
+	+ Changed the name of:
+		- Record.isWinner() => Record.hasSameDecision()
+
+	+ TODO:
+		- Make into files
+		- Other things...

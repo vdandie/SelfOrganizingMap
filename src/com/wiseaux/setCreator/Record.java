@@ -5,7 +5,7 @@ package com.wiseaux.setCreator;
  *
  * @author Daniel Swain
  */
-public final class Record implements Registry {
+public class Record implements Registry {
 
     protected double[] registry;
     protected String name;
@@ -260,7 +260,7 @@ public final class Record implements Registry {
     /**
      * Returns true if the decision values of each record are equal to each other
      */
-    public boolean isWinner(Record check) {
+    public boolean hasSameDecision(Record check) {
         return this.getDecision() == check.getDecision();
     }
     
