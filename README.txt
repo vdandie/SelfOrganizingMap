@@ -1,131 +1,33 @@
-/////////////////////////
-//  SelfOrganizingMap  //
-/////////////////////////
-Written by Daniel Swain
+			/////////////////////////
+			//  SelfOrganizingMap  //
+			/////////////////////////
+			Since		09/04/14
+			Written by 	Daniel Swain Jr
 
-1.0 	- 09/04/14
+	An alteration to the original SelfOrganizingMap.
 
-	+ The project works, but its untidy. Fix iminent
+SetCreator - 		Creates the test and trainingSet from the input file
+				using the configurations in the config file.
+					TestSets are created by randomly grabbing 10% of 
+				each record of each decision 10 times. TrainingSets
+				are then created by taking the leftover 90% of each
+				of the TestSets. 
+					TrainingSets are then trained by sending records into
+				an matrix that begins empty. When sent, 1 of 3 cases can happen:
 
-1.0.1 	- 09/09/14
+					1. If the record sent is a neighbor to any of the rules
+					 in the matrix, the record updates the rule using an 
+					 algorithm and then added to the cluster of said rule.
 
-	+ Added some functionalities.
+					2. If the record is a neighbor to more than one rule, the decision
+					 of the record is used to decide which rule is updated by the 
+					 record. If they match, the rule is updated by the record.
 
-1.1 	- 09/16/14
+					3. If the record is a neighbor to none of the rules, then 
+					 the record itself becomes a rule and is appended to the end
+					 of the matrix.
 
-	+ Complete overhaul of the structure of the code.
-	+ Much easier to read and stuff.
+					This is how trainingSets are created.
 
-1.1.1 	- 09/23/14
-
-	+ Added more functionalities. 
-
-1.1.2 	- 09/30/14
-
-	+ Fixed: RandRecordSet
-		- getLeftovers() 	
-			was returning completely wrong outputs. FIXED
-		- createTrainingSet	
-			because getLeftovers() wasn't working,
-			this wasn't either. FIXED
-
-	+ Made SOMEnhanced better:
-		- firstTimeInitialization() is now run()
-		- aquireTrainingSet() is now train(int numOfSets)
-		- now accurately prints 10 trainingSets with readable records
-
-	+ Known Bugs:
-		- Need to make the output and trainingSet file numbers the 
-			same in every situation so it's easier to find the pairs
-		- When making more than one training set, the records start 
-			to come out funny. Training sets 1 and 2 look decent.
-
-1.1.3 	- 10/02/14
-
-	+ Fixed the mysterious winner rule
-		- cleanMatrix()		
-			Added a feature so that it will now clean the winners
-			 that don't have corresponding records in the matrix
-
-	+ Changed the name of:
-		- SelfOrganizingMap =>	AbstractSetCreator
-		- SOM  				=>	SetCreator
-		- SOMEnhanced		=>	SetCreatorEnhanced
-		- Should be easier to understand now.
-
-	+ TODO:
-		- Build new package containing classes to handle the
-			shooting of the test sets to the chosen training set
-		
-1.1.4	- 10/05/14
-
-	+ Trying to fix: Multiple TrainingSet Problem
-		- Currently when making multiple training sets, the records
-		 	change throughout the queues, i.e. the records altered in 
-		 	the previous run are the same records used over again.
-
-1.1.5	- 10/05/14
-
-	+ Kind of fixed: Multiple TrainingSet Problem
-		- Creating multiple trained sets used to be a problem,
-			 and is now fixed by the addition of the resetAlpha() function
-		- Alpha wasn't being reset, therefore the updated values
-			 became smaller and smaller
-
-	+ New Problem: Duplicates... Again.
-		- Duplicates are showing up again even though being ran 
-			through cleanMatrix()
-
-1.2.0 	- 10/07/14
-
-	+ Kind of fixed: Certainty Factor/Cover Problem
-		- If a Rule(aka Seed) had it's dominant decision changed
-			it wouldn't count itself as a winner and the cover
-			and certainty factor would be off.
-
-	+ Added functions to: Intersector
-		- (void)read(int) 	
-			// Reads the files of the corresponding int
-		- (void)readTestSetFile(int)	
-			// Reads the test set file of the corresponding int
-		- (void)readTrainingSetFile(int)
-			// Reads the training set file of the corresponding int
-		- (void)run()		
-			// Runs the algorithm
-
-	+ Added functions to: Record
-		-Record(Record,String)
-			// Constructor that creates a record with a name
-
-	+ Still A Problem: Duplicates... Again.
-		- The duplicates seem to be somewhat different from each other
-			therefore are not being caught by the cleanMatrix()
-		- Will ask Dr Hashemi about this.
-
-	+ TODO:
-		- implement run() in Intersector
-		- Do something about the semi-duplicates
-
-1.2.1 	- 10/08/14
-	
-	+ Created:
-		- Intersector.runAlgorithm() - Sends each test record against
-			all rules in the trainingSet
-		- Intersector.sumAbsDif() - Returns the sum of the absolute 
-			value differences ofattributes between two given records.
-		- Intersector.times	- Number of files/times to do the algorthim
-		- Intersector.match - A map where the key is the file number
-			and the value is a double array of size 2 containing:
-				1. The # of Matches that came through
-				2. The Size of the TrainingSet
-
-	+ Implemented run()
-		-Uses runAlgorithm on each of the specified number of sets
-	+ Implemented runAlgorithm()
-
-	+ Changed the name of:
-		- Record.isWinner() => Record.hasSameDecision()
-
-	+ TODO:
-		- Make into files
-		- Other things...
+Intersector -		Takes the testSets and sends them to the corresponding 
+				trained trainingSet.

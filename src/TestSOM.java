@@ -13,8 +13,9 @@ public class TestSOM {
 //        som.run();
 //        som.train(10);
         Intersector thing = new Intersector();
-        thing.read(1);
+        thing.read(10);
         thing.run();
+        thing.resultsToFile("result");
     }
         
 }

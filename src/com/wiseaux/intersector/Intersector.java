@@ -3,10 +3,10 @@ package com.wiseaux.intersector;
 import com.wiseaux.setCreator.Record;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Scanner;
 
@@ -19,33 +19,33 @@ import java.util.Scanner;
 public class Intersector {
 
     /**
-     * Holds the testSets
+     * Holds the testSets.
      */
     Queue[] testSets;
 
     /**
-     * Holds the trainingSets
+     * Holds the trainingSets.
      */
     Queue[] trainingSets;
     
     /**
-     * Holds the minimum values
+     * Holds results for each of the runs.
      */
-    Map[] minValues;
+    ArrayList[] results;
     
     /**
-     * Number of files to go through
+     * Number of files to go through.
      */
     protected int times;
     
     public Intersector() {
         testSets = new Queue[11];
         trainingSets = new Queue[11];
-        minValues = new HashMap[11];
+        results = new ArrayList[11];
     }
 
     /**
-     * Reads the test and training for the given file
+     * Reads the test and training for the given file.
      */
     public void read(int fileNumber) {
         times = fileNumber;
@@ -57,7 +57,7 @@ public class Intersector {
     }
 
     /**
-     * Runs the tests
+     * Runs the tests.
      */
     public void run() {
         if (testSets.length < 1 || trainingSets.length < 1) {
@@ -78,13 +78,15 @@ public class Intersector {
     }
 
     /**
-     * Sends the test set record at the given training set
+     * Sends the test set record at the given training set.
      */
     void runAlgorithm(int setNumber) {
         Queue<Record> testQueue = testSets[setNumber];
         Queue<Record> trainingQueue = trainingSets[setNumber];
+        ArrayList<String> result = new ArrayList<>();
         
-        System.out.println("TestSet : " + setNumber);
+        result.add("TestSet : " + setNumber + "\n");
+        //System.out.println("TestSet : " + setNumber);
 
         int count = 0;
         double temp = 0;
@@ -106,16 +108,29 @@ public class Intersector {
             if(match) {
                 count++;
             }
-            System.out.println(test.getName() +
-                    " | min value : " + min + 
-                    " | with Rule : "+ name +
-                    " | match : "+ match);
+            
+            result.add(String.format("Test Record : %-6s | Min Value: %-3s "
+                    + "| Rule : %-5s | Match: %-5s | %-6s",
+                    String.format("%5s", test.getName()), 
+                    String.format("%.2f", min),
+                    String.format("R:%2s", name),
+                    String.format("%s", match),
+                    String.format("D: %.0f", test.getDecision()) ) 
+                    + "\n");
+            //System.out.println();
         }
-        System.out.println(count + " " + testQueue.size());
+        result.add("\nOverall Match percentage:  " + 
+                String.format("%.2f",((double)count/(double)testQueue.size())) +
+                "|  # Matched " + count +
+                "|  # Not Matched " + (testQueue.size() - count) +
+                "|  Total : " + testQueue.size() 
+                + "\n");
+        //System.out.println(count + " " + testQueue.size());
+        results[setNumber] = result;
     }
     
     /**
-     * Gets the sum of the absolute value differences in the records given
+     * Gets the sum of the absolute value differences in the records given.
      */
     double sumAbsDif(Record testRecord, Record rule) {
         double sum = 0;
@@ -126,7 +141,7 @@ public class Intersector {
     }
 
     /**
-     * Reads the trainingSet File
+     * Reads the trainingSet File.
      */
     private void readTrainingSetFile(int index) {
         try (Scanner input = new Scanner(new File("trainingSets\\trainingSet_" + index + ".txt"))) {
@@ -205,5 +220,47 @@ public class Intersector {
             System.out.println("Record array is not initialized.");
             System.exit(1);
         }
+    }
+    /**
+     * Prints the results into a directory.
+     */
+    public void resultsToFile(String name) {
+
+        File output = new File(name+"s");
+        output.mkdir();
+        
+        output = new File(name + "s\\" + name + 1 + ".txt");
+
+        for (ArrayList<String> result: results) {
+            if(result == null) {
+                continue;
+            }
+            
+            try {
+                int i = 1;
+                while (output.exists()) {
+                    output = new File(name + "s\\" + name + i++ + ".txt");
+                }
+                output.createNewFile();
+
+            } catch (IOException ex) {
+                System.out.print("OutputToFile can't find directory");
+                System.exit(1);
+            }
+
+            try (PrintWriter write = new PrintWriter(output)) {
+
+                write.flush();
+                for(String line: result) {
+                    write.write(line);
+                }
+                write.close();
+
+            } catch (FileNotFoundException e) {
+                System.out.println("Output file not found.");
+                System.exit(1);
+            }
+        }
+    
     }
 }
