@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -81,8 +83,21 @@ public class Matrix extends AbstractSetCreator {
      * multiplied by the difference of value2 by value1.
      */
     private double calcNewRecord(double value1, double value2, double alpha) {
-        return value1 + alpha * (value2 - value1);
+        return round(value1 + alpha * (value2 - value1), 2);
     }
+    
+    /**
+     * Rounds the value to two decimal places
+     * 
+     * stackoverflow.com/questions/2808535/round-a-double-to-2-decimal-places
+     */
+    private double round(double value, int places) {
+    if (places < 0) throw new IllegalArgumentException();
+
+    BigDecimal bd = new BigDecimal(value);
+    bd = bd.setScale(places, RoundingMode.HALF_UP);
+    return bd.doubleValue();
+}
     
     /**
      * Finds out if the record is in the recordSet.

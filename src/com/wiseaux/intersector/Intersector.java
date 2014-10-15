@@ -27,21 +27,27 @@ public class Intersector {
      * Holds the trainingSets.
      */
     Queue[] trainingSets;
-    
+
     /**
      * Holds results for each of the runs.
      */
     ArrayList[] results;
     
     /**
+     * Holds the average results
+     */
+    ArrayList<Double> averages;
+
+    /**
      * Number of files to go through.
      */
     protected int times;
-    
+
     public Intersector() {
         testSets = new Queue[11];
         trainingSets = new Queue[11];
         results = new ArrayList[11];
+        averages = new ArrayList<>();
     }
 
     /**
@@ -49,8 +55,8 @@ public class Intersector {
      */
     public void read(int fileNumber) {
         times = fileNumber;
-        
-        for(int i = 0; i < fileNumber; i++) {
+
+        for (int i = 0; i < fileNumber; i++) {
             readTrainingSetFile(i + 1);
             readTestSetFile(i + 1);
         }
@@ -64,12 +70,12 @@ public class Intersector {
             System.out.println("Error: Test or Training set is empty.");
             System.exit(0);
         }
-        for(int i = 1; i <= times; i++) {
-            if(testSets[i] == null) {
+        for (int i = 1; i <= times; i++) {
+            if (testSets[i] == null) {
                 System.out.println("Null testSet at " + i);
                 continue;
             }
-            if(trainingSets[i] == null) {
+            if (trainingSets[i] == null) {
                 System.out.println("Null trainingSet at " + i);
                 continue;
             }
@@ -84,19 +90,19 @@ public class Intersector {
         Queue<Record> testQueue = testSets[setNumber];
         Queue<Record> trainingQueue = trainingSets[setNumber];
         ArrayList<String> result = new ArrayList<>();
-        
+        int falsePos = 0, truePos = 0, falseNeg = 0, trueNeg = 0;
         result.add("TestSet : " + setNumber + "\n");
         //System.out.println("TestSet : " + setNumber);
 
         int count = 0;
-        double temp = 0;
+        double temp;
         for (Record test : testQueue) {
             double min = Double.MAX_VALUE;
             int name = 0;
             boolean match = false;
-            
+
             for (Record rule : trainingQueue) { //For each test, send it against every rule
-                                                //and get the sumAbsDif. 
+                //and get the sumAbsDif. 
                 temp = sumAbsDif(test, rule);
                 if (temp < min) {
                     min = temp;
@@ -104,40 +110,81 @@ public class Intersector {
                     match = test.hasSameDecision(rule);
                 }
             }
-            
-            if(match) {
+
+            if (match) {
                 count++;
+                if (test.getDecision() == 0) {
+                    truePos += 1;
+                } else {
+                    falsePos += 1;
+                }
+            } else if (!match) {
+                if (test.getDecision() == 1) {
+                    trueNeg += 1;
+                } else {
+                    falseNeg += 1;
+                }
+
             }
-            
+
             result.add(String.format("Test Record : %-6s | Min Value: %-3s "
                     + "| Rule : %-5s | Match: %-5s | %-6s",
-                    String.format("%5s", test.getName()), 
+                    String.format("%5s", test.getName()),
                     String.format("%.2f", min),
                     String.format("R:%2s", name),
                     String.format("%s", match),
-                    String.format("D: %.0f", test.getDecision()) ) 
-                    + "\n");
+                    String.format("D: %.0f", test.getDecision()))
+                    + "\n"
+            );
             //System.out.println();
         }
-        result.add("\nOverall Match percentage:  " + 
-                String.format("%.2f",((double)count/(double)testQueue.size())) +
-                "|  # Matched " + count +
-                "|  # Not Matched " + (testQueue.size() - count) +
-                "|  Total : " + testQueue.size() 
-                + "\n");
+
+        //True/False Pos/Neg table
+        String tableFormat = "%-10s | %-6s | %-6s |";
+        String line = "-------------------------------";
+        result.add(String.format(tableFormat, " ", "0", "1") + "\n" + line
+                + "\n" + String.format(tableFormat, "0", truePos, trueNeg)
+                + "\n" + String.format(tableFormat, "1", falseNeg, falsePos)
+                + "\n" + line
+        );
+
+        result.add("\nOverall Match percentage:  "
+                + String.format("%.2f", ((double) count / (double) testQueue.size()))
+                + "|  # Matched " + count
+                + "|  # Not Matched " + (testQueue.size() - count)
+                + "|  Total : " + testQueue.size()
+                + "\n"
+        );
+        
+        averages.add(((double) count / (double) testQueue.size()));
+        
         //System.out.println(count + " " + testQueue.size());
         results[setNumber] = result;
     }
-    
+
     /**
      * Gets the sum of the absolute value differences in the records given.
      */
     double sumAbsDif(Record testRecord, Record rule) {
         double sum = 0;
-        for(int i = 0; i < testRecord.getSize(); i++) {
-            sum += Math.abs(testRecord.getAttribute(i) - rule.getAttribute(i));
+        double num = 0;
+        for (int i = 0; i < testRecord.getSize(); i++) {
+            num = Math.abs(testRecord.getAttribute(i) - rule.getAttribute(i));
+            if (num < 1) {
+                sum += 0;
+            } else {
+                sum += 1;
+            }
         }
         return sum;
+    }
+    
+    double calcAvg(){
+        double avg = 0;
+        for(double dub: averages){
+            avg += dub;
+        }
+        return avg/averages.size();
     }
 
     /**
@@ -146,7 +193,7 @@ public class Intersector {
     private void readTrainingSetFile(int index) {
         try (Scanner input = new Scanner(new File("trainingSets\\trainingSet_" + index + ".txt"))) {
             Queue<Record> newQueue = new LinkedList<>();
-            
+
             int name = 1;
             while (input.hasNext()) {
                 String line = input.nextLine();
@@ -164,7 +211,7 @@ public class Intersector {
             trainingSets[index] = newQueue;
             input.close();
         } catch (FileNotFoundException e) {
-            System.out.println("TrainingSet File "+index+" was not found.");
+            System.out.println("TrainingSet File " + index + " was not found.");
             System.exit(1);
         } catch (NullPointerException e) {
             System.out.println("Record array is not initialized.");
@@ -214,28 +261,29 @@ public class Intersector {
 
             input.close();
         } catch (FileNotFoundException e) {
-            System.out.println("TestSet File "+index+" was not found.");
+            System.out.println("TestSet File " + index + " was not found.");
             System.exit(1);
         } catch (NullPointerException e) {
             System.out.println("Record array is not initialized.");
             System.exit(1);
         }
     }
+
     /**
      * Prints the results into a directory.
      */
     public void resultsToFile(String name) {
 
-        File output = new File(name+"s");
+        File output = new File(name + "s");
         output.mkdir();
-        
+
         output = new File(name + "s\\" + name + 1 + ".txt");
 
-        for (ArrayList<String> result: results) {
-            if(result == null) {
+        for (ArrayList<String> result : results) {
+            if (result == null) {
                 continue;
             }
-            
+
             try {
                 int i = 1;
                 while (output.exists()) {
@@ -251,7 +299,7 @@ public class Intersector {
             try (PrintWriter write = new PrintWriter(output)) {
 
                 write.flush();
-                for(String line: result) {
+                for (String line : result) {
                     write.write(line);
                 }
                 write.close();
@@ -262,43 +310,48 @@ public class Intersector {
             }
         }
     }
-    
+
+    /**
+     * Prints an overall.txt that has overall results for all results
+     */
     public void totalResultsFile() {
         File output = new File("results");
         output.mkdir();
-        
+
         output = new File("results\\overall.txt");
 
-        
-            try {
-                int i = 1;
-                while (output.exists()) {
-                    output = new File("results\\overall" + i++ + ".txt");
-                }
-                output.createNewFile();
-
-            } catch (IOException ex) {
-                System.out.print("OutputToFile can't find directory");
-                System.exit(1);
+        try {
+            int i = 1;
+            while (output.exists()) {
+                output = new File("results\\overall" + i++ + ".txt");
             }
+            output.createNewFile();
 
-            try (PrintWriter write = new PrintWriter(output)) {
+        } catch (IOException ex) {
+            System.out.print("OutputToFile can't find directory");
+            System.exit(1);
+        }
 
-                write.flush();
-                for(ArrayList<String> line: results) {
-                    if(line == null) {
-                        continue;
-                    }
-                    write.write("\n\n");
-                    write.write(line.get(0));
-                    write.write(line.get(line.size()-1));
+        try (PrintWriter write = new PrintWriter(output)) {
+
+            write.flush();
+            for (ArrayList<String> line : results) {
+                if (line == null) {
+                    continue;
                 }
-                write.close();
-
-            } catch (FileNotFoundException e) {
-                System.out.println("Output file not found.");
-                System.exit(1);
+                write.write("\n\n");
+                write.write(line.get(0));
+                write.write(line.get(line.size() - 2) + "\n");
+                write.write(line.get(line.size() - 1));
             }
-        
+            write.write("\n\nTotal average match percentage: "+ 
+                    String.format("%.2f",calcAvg() * 100 )+ "%");
+            write.close();
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Output file not found.");
+            System.exit(1);
+        }
+
     }
 }

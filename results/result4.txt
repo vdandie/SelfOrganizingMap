@@ -1,45 +1,49 @@
 TestSet : 4
-Test Record :   R:1  | Min Value: 5.00 | Rule : R:12  | Match: false | D: 1  
+Test Record :   R:1  | Min Value: 3.00 | Rule : R: 7  | Match: true  | D: 0  
 Test Record :   R:2  | Min Value: 4.00 | Rule : R: 2  | Match: false | D: 0  
-Test Record :   R:3  | Min Value: 5.00 | Rule : R:13  | Match: true  | D: 1  
-Test Record :   R:4  | Min Value: 3.00 | Rule : R:18  | Match: true  | D: 0  
-Test Record :   R:5  | Min Value: 5.00 | Rule : R:12  | Match: true  | D: 0  
-Test Record :   R:6  | Min Value: 3.70 | Rule : R: 1  | Match: false | D: 0  
-Test Record :   R:7  | Min Value: 6.00 | Rule : R:12  | Match: true  | D: 0  
-Test Record :   R:8  | Min Value: 4.00 | Rule : R:13  | Match: false | D: 0  
-Test Record :   R:9  | Min Value: 5.00 | Rule : R: 4  | Match: true  | D: 0  
-Test Record : R:10	  | Min Value: 3.00 | Rule : R:13  | Match: false | D: 0  
-Test Record : R:11	  | Min Value: 6.00 | Rule : R: 4  | Match: true  | D: 0  
-Test Record : R:12	  | Min Value: 2.00 | Rule : R:11  | Match: true  | D: 1  
-Test Record : R:13	  | Min Value: 6.00 | Rule : R:12  | Match: true  | D: 0  
-Test Record : R:14	  | Min Value: 6.82 | Rule : R:19  | Match: true  | D: 1  
-Test Record : R:15	  | Min Value: 4.00 | Rule : R: 5  | Match: true  | D: 0  
-Test Record : R:16	  | Min Value: 7.00 | Rule : R: 5  | Match: true  | D: 0  
-Test Record : R:17	  | Min Value: 2.00 | Rule : R: 2  | Match: true  | D: 1  
-Test Record : R:18	  | Min Value: 4.00 | Rule : R: 4  | Match: true  | D: 0  
-Test Record : R:19	  | Min Value: 3.00 | Rule : R:13  | Match: false | D: 0  
-Test Record : R:20	  | Min Value: 5.00 | Rule : R: 3  | Match: true  | D: 1  
+Test Record :   R:3  | Min Value: 4.00 | Rule : R:15  | Match: true  | D: 0  
+Test Record :   R:4  | Min Value: 4.00 | Rule : R: 1  | Match: false | D: 0  
+Test Record :   R:5  | Min Value: 2.00 | Rule : R:20  | Match: false | D: 0  
+Test Record :   R:6  | Min Value: 4.00 | Rule : R: 2  | Match: false | D: 0  
+Test Record :   R:7  | Min Value: 3.00 | Rule : R: 2  | Match: false | D: 0  
+Test Record :   R:8  | Min Value: 3.00 | Rule : R:21  | Match: true  | D: 0  
+Test Record :   R:9  | Min Value: 5.00 | Rule : R:15  | Match: true  | D: 0  
+Test Record : R:10	  | Min Value: 2.00 | Rule : R:19  | Match: true  | D: 1  
+Test Record : R:11	  | Min Value: 5.00 | Rule : R: 3  | Match: true  | D: 1  
+Test Record : R:12	  | Min Value: 3.00 | Rule : R: 9  | Match: false | D: 0  
+Test Record : R:13	  | Min Value: 3.00 | Rule : R:10  | Match: true  | D: 1  
+Test Record : R:14	  | Min Value: 3.00 | Rule : R:13  | Match: true  | D: 0  
+Test Record : R:15	  | Min Value: 1.00 | Rule : R: 9  | Match: true  | D: 1  
+Test Record : R:16	  | Min Value: 4.00 | Rule : R: 7  | Match: true  | D: 0  
+Test Record : R:17	  | Min Value: 3.00 | Rule : R: 4  | Match: true  | D: 0  
+Test Record : R:18	  | Min Value: 4.00 | Rule : R: 6  | Match: false | D: 0  
+Test Record : R:19	  | Min Value: 3.00 | Rule : R: 1  | Match: true  | D: 1  
+Test Record : R:20	  | Min Value: 2.00 | Rule : R: 2  | Match: false | D: 0  
 Test Record : R:21	  | Min Value: 4.00 | Rule : R: 2  | Match: false | D: 0  
-Test Record : R:22	  | Min Value: 6.00 | Rule : R: 7  | Match: false | D: 1  
-Test Record : R:23	  | Min Value: 4.00 | Rule : R:10  | Match: true  | D: 0  
-Test Record : R:24	  | Min Value: 4.00 | Rule : R:12  | Match: true  | D: 0  
-Test Record : R:25	  | Min Value: 4.00 | Rule : R:12  | Match: true  | D: 0  
-Test Record : R:26	  | Min Value: 3.00 | Rule : R: 8  | Match: true  | D: 0  
-Test Record : R:27	  | Min Value: 4.00 | Rule : R:18  | Match: true  | D: 0  
-Test Record : R:28	  | Min Value: 3.00 | Rule : R:12  | Match: true  | D: 0  
-Test Record : R:29	  | Min Value: 6.00 | Rule : R: 4  | Match: true  | D: 0  
-Test Record : R:30	  | Min Value: 5.00 | Rule : R:13  | Match: false | D: 0  
-Test Record : R:31	  | Min Value: 4.00 | Rule : R:13  | Match: true  | D: 1  
-Test Record : R:32	  | Min Value: 5.00 | Rule : R: 3  | Match: false | D: 0  
-Test Record : R:33	  | Min Value: 8.00 | Rule : R:12  | Match: true  | D: 0  
-Test Record : R:34	  | Min Value: 3.00 | Rule : R:16  | Match: true  | D: 1  
-Test Record : R:35	  | Min Value: 3.00 | Rule : R: 8  | Match: true  | D: 0  
-Test Record : R:36	  | Min Value: 4.00 | Rule : R:12  | Match: true  | D: 0  
-Test Record : R:37	  | Min Value: 4.00 | Rule : R:13  | Match: false | D: 0  
-Test Record : R:38	  | Min Value: 4.00 | Rule : R:11  | Match: false | D: 0  
-Test Record : R:39	  | Min Value: 5.00 | Rule : R:11  | Match: true  | D: 1  
-Test Record : R:40	  | Min Value: 6.00 | Rule : R:14  | Match: false | D: 0  
-Test Record : R:41	  | Min Value: 8.78 | Rule : R:19  | Match: false | D: 0  
-Test Record : R:42	  | Min Value: 6.00 | Rule : R: 3  | Match: false | D: 0  
-
-Overall Match percentage:  0.64|  # Matched 27|  # Not Matched 15|  Total : 42
+Test Record : R:22	  | Min Value: 1.00 | Rule : R:16  | Match: true  | D: 0  
+Test Record : R:23	  | Min Value: 3.00 | Rule : R:19  | Match: false | D: 0  
+Test Record : R:24	  | Min Value: 3.00 | Rule : R: 4  | Match: true  | D: 0  
+Test Record : R:25	  | Min Value: 3.00 | Rule : R:20  | Match: false | D: 0  
+Test Record : R:26	  | Min Value: 1.00 | Rule : R:12  | Match: true  | D: 1  
+Test Record : R:27	  | Min Value: 3.00 | Rule : R:13  | Match: true  | D: 0  
+Test Record : R:28	  | Min Value: 3.00 | Rule : R: 8  | Match: true  | D: 0  
+Test Record : R:29	  | Min Value: 2.00 | Rule : R:21  | Match: true  | D: 0  
+Test Record : R:30	  | Min Value: 4.00 | Rule : R:15  | Match: true  | D: 0  
+Test Record : R:31	  | Min Value: 2.00 | Rule : R: 2  | Match: true  | D: 1  
+Test Record : R:32	  | Min Value: 3.00 | Rule : R: 6  | Match: true  | D: 1  
+Test Record : R:33	  | Min Value: 4.00 | Rule : R:16  | Match: true  | D: 0  
+Test Record : R:34	  | Min Value: 4.00 | Rule : R: 4  | Match: true  | D: 0  
+Test Record : R:35	  | Min Value: 2.00 | Rule : R: 2  | Match: false | D: 0  
+Test Record : R:36	  | Min Value: 3.00 | Rule : R: 7  | Match: true  | D: 0  
+Test Record : R:37	  | Min Value: 3.00 | Rule : R:13  | Match: true  | D: 0  
+Test Record : R:38	  | Min Value: 3.00 | Rule : R: 2  | Match: true  | D: 1  
+Test Record : R:39	  | Min Value: 4.00 | Rule : R:13  | Match: true  | D: 0  
+Test Record : R:40	  | Min Value: 2.00 | Rule : R: 2  | Match: true  | D: 1  
+Test Record : R:41	  | Min Value: 3.00 | Rule : R: 4  | Match: true  | D: 0  
+Test Record : R:42	  | Min Value: 3.00 | Rule : R:10  | Match: false | D: 0  
+           | 0      | 1      |
+-------------------------------
+0          | 19     | 0      |
+1          | 13     | 10     |
+-------------------------------
+Overall Match percentage:  0.69|  # Matched 29|  # Not Matched 13|  Total : 42

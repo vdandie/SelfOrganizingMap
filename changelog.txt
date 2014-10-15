@@ -132,7 +132,7 @@ Written by Daniel Swain Jr
 1.2.2 	- 10/08/14
 
 	+ Created:
-		-Intersector.results - ArrayList<String> that contains the formatted
+		-Intersector.results() - ArrayList<String> that contains the formatted
 			results of each run.
 		-Intersector.resultsToFile(String) - Creates files in a directory
 			for the results
@@ -147,5 +147,22 @@ Written by Daniel Swain Jr
 1.2.3 	- 10/09/14
 
 	+Created:
-		-Intersector.totalResultsFile - takes the totals of all tests and
+		-Intersector.totalResultsFile() - takes the totals of all tests and
 			puts them in one file called "overall.txt"
+
+	+ TODO:
+		- Round off the records in the training sets to the thousandths 
+			after training is complete and re-clean matrix
+
+1.2.4	- 10/13/14
+
+	+ Created:
+		- Matrix.round(double, int) - rounds the given value to the given number of places
+
+	+Changes in:
+		- Intersector.sumAbsDif() - changes so that the values added are either 0 or 1.
+		- Intersector.runAlgorithm() - added functionality for true/false pos/neg table.
+		- Matrix.updateRecord() - values are now rounded to the thousandths
+
+	+ TODO:
+		- Negative values... How are they made?!

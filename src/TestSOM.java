@@ -1,5 +1,6 @@
 
 import com.wiseaux.intersector.Intersector;
+import com.wiseaux.setCreator.SetCreatorEnhanced;
 
 /**
  * This is where the SelfOrganizingMap is going to be run.
@@ -15,7 +16,7 @@ public class TestSOM {
         Intersector thing = new Intersector();
         thing.read(10);
         thing.run();
-        //thing.resultsToFile("result");
+        thing.resultsToFile("result");
         thing.totalResultsFile();
     }
         
