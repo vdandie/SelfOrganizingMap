@@ -1,13 +1,13 @@
-##SelfOrganizingMap
+#SelfOrganizingMap
 
 
 |Since		|09/04/14		|
 |----------:|--------------:|
 |Written by |Daniel Swain Jr|
 
-#An alteration to the original SelfOrganizingMap.
+##An alteration to the original SelfOrganizingMap.
 
-##SetCreator  		
+#SetCreator  		
 
 Creates the test and trainingSet from the input file
 using the configurations in the config file.
