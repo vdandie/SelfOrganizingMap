@@ -1,7 +1,8 @@
 ##SelfOrganizingMap
-|           |               |
-|----------:|--------------:|
+
+
 |Since		|09/04/14		|
+|----------:|--------------:|
 |Written by |Daniel Swain Jr|
 
 #An alteration to the original SelfOrganizingMap.
@@ -30,7 +31,7 @@ an matrix that begins empty. When sent, 1 of 3 cases can happen:
 
 This is how trainingSets are created.
 
-##Intersector -	
+##Intersector
 
 Takes the testSets and sends them to the corresponding 
 trained trainingSet.
