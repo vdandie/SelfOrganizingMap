@@ -39,10 +39,18 @@ public class SetCreatorEnhanced extends SetCreator {
     }
 
     /**
+     * Reads the configuration and trains with the pre-created sets
+     */
+    public void runForPreCreatedSets() {
+        readConfig();
+        rSet = new RandRecordSet();
+    }
+
+    /**
      * Puts the testSets into files
      */
     public void testSetsToFiles() {
-           Queue[] temp = new Queue[testSet.length];
+        Queue[] temp = new Queue[testSet.length];
         for (int i = 0; i < temp.length / 2; i++) {
             temp[i] = rSet.createQueue(testSet, i);
         }
@@ -52,6 +60,18 @@ public class SetCreatorEnhanced extends SetCreator {
         for (int i = 0; i < testSet.length / 2; i++) {
             rSet.printQue(testSet[i], "testSets\\testSet");
         }
+    }
+
+    /**
+     * Access shootRecordsForPreCreatedSets() using the pre-created
+     * trainingSets.
+     */
+    public void trainPreCreatedSets() {
+        trainingSet = new Queue[10];
+        matrices = new MatrixEnhanced[trainingSet.length];
+        fillTrainingSet();
+        shootRecords_2(trainingSet, trainingSet.length, matrices);
+        this.outputToFile(matrices, "trainingSets\\trainingSetWithData");
     }
 
     /**
@@ -79,6 +99,29 @@ public class SetCreatorEnhanced extends SetCreator {
                 System.exit(1);
             }
             rSet.printQue(que, "trainingSets\\origTrainingSet");
+            findWinner(que, epochs, matrices[i]);
+            matrices[i].checkForDuplicates();
+            matrices[i].addCertainties();
+            matrices[i].printForRead();
+        }
+    }
+
+    /**
+     * Creates a queue to send to findWinner using the given queue array
+     */
+    private void shootRecords_2(Queue[] records, int numOfSets, MatrixEnhanced[] matrices) {
+        //Currently only returns a single trainingSet
+        for (int i = 0; i < numOfSets; i++) {
+            Queue<Record> que = records[i];
+
+            matrices[i] = new MatrixEnhanced();
+            resetAlpha();
+
+            if (que.isEmpty()) {
+                System.out.println("There are no records to send!");
+                System.exit(1);
+            }
+            //rSet.printQue(que, "trainingSets\\origTrainingSet");
             findWinner(que, epochs, matrices[i]);
             matrices[i].checkForDuplicates();
             matrices[i].addCertainties();
@@ -132,12 +175,24 @@ public class SetCreatorEnhanced extends SetCreator {
                 int name = matrix.getRecord(index).getIntName();
                 matrix.updateMatrix(record, index, alpha, name);
             } else if (count > 1) { //Find which record it matched and matched decision, update
+                int name = -1;
+                int found = -1;
                 for (int index = 0; index < neighbors.length; index++) {
                     if (neighbors[index] && matrix.getRecord(index).hasSameDecision(record)) {
-                        int name = matrix.getRecord(index).getIntName();
-                        matrix.updateMatrix(record, index, alpha, name);
+                        int max = Integer.MIN_VALUE;
+                        int temp = matrix.getClusterSize(index);
+
+                        if (max < temp) {
+                            name = matrix.getRecord(index).getIntName();
+                            found = index;
+                        }
                     }
                 }
+
+                if (name != -1 && found != -1) {
+                    matrix.updateMatrix(record, found, alpha, name);
+                }
+
             }
             recNum++;
         }
@@ -173,4 +228,5 @@ public class SetCreatorEnhanced extends SetCreator {
         }
         return index;
     }
+
 }

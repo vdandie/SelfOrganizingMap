@@ -57,7 +57,6 @@ public class RandRecordSet {
         Queue<Record> queue = new LinkedList<>();
         queue.addAll(Arrays.asList(shuffleArray(records)));
         return queue;
-
     }
 
     /**

@@ -1,0 +1,103 @@
+
+
+TestSet : 1
+           | 0      | 1      |
+-------------------------------
+0          | 31     | 2      |
+1          | 1      | 8      |
+-------------------------------
+
+Overall Match percentage:  0.93|  # Matched 39|  # Not Matched 3|  Total : 42
+
+
+TestSet : 2
+           | 0      | 1      |
+-------------------------------
+0          | 30     | 1      |
+1          | 2      | 9      |
+-------------------------------
+
+Overall Match percentage:  0.93|  # Matched 39|  # Not Matched 3|  Total : 42
+
+
+TestSet : 3
+           | 0      | 1      |
+-------------------------------
+0          | 28     | 1      |
+1          | 4      | 9      |
+-------------------------------
+
+Overall Match percentage:  0.88|  # Matched 37|  # Not Matched 5|  Total : 42
+
+
+TestSet : 4
+           | 0      | 1      |
+-------------------------------
+0          | 25     | 0      |
+1          | 7      | 10     |
+-------------------------------
+
+Overall Match percentage:  0.83|  # Matched 35|  # Not Matched 7|  Total : 42
+
+
+TestSet : 5
+           | 0      | 1      |
+-------------------------------
+0          | 31     | 4      |
+1          | 1      | 6      |
+-------------------------------
+
+Overall Match percentage:  0.88|  # Matched 37|  # Not Matched 5|  Total : 42
+
+
+TestSet : 6
+           | 0      | 1      |
+-------------------------------
+0          | 28     | 3      |
+1          | 4      | 7      |
+-------------------------------
+
+Overall Match percentage:  0.83|  # Matched 35|  # Not Matched 7|  Total : 42
+
+
+TestSet : 7
+           | 0      | 1      |
+-------------------------------
+0          | 31     | 7      |
+1          | 1      | 3      |
+-------------------------------
+
+Overall Match percentage:  0.81|  # Matched 34|  # Not Matched 8|  Total : 42
+
+
+TestSet : 8
+           | 0      | 1      |
+-------------------------------
+0          | 31     | 5      |
+1          | 1      | 5      |
+-------------------------------
+
+Overall Match percentage:  0.86|  # Matched 36|  # Not Matched 6|  Total : 42
+
+
+TestSet : 9
+           | 0      | 1      |
+-------------------------------
+0          | 30     | 1      |
+1          | 2      | 9      |
+-------------------------------
+
+Overall Match percentage:  0.93|  # Matched 39|  # Not Matched 3|  Total : 42
+
+
+TestSet : 10
+           | 0      | 1      |
+-------------------------------
+0          | 31     | 3      |
+1          | 1      | 7      |
+-------------------------------
+
+Overall Match percentage:  0.90|  # Matched 38|  # Not Matched 4|  Total : 42
+
+
+Total average match percentage: 87.86%

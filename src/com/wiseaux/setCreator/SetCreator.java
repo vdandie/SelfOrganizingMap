@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
@@ -73,7 +75,7 @@ public class SetCreator extends AbstractSetCreator {
     }
 
     /**
-     * Read the record file for the project, add records to a set of records
+     * Read the record file for the project, add records to a set of records.
      */
     protected void readRecords() {
         try (Scanner input = new Scanner(new File(inputLoc))) {
@@ -92,9 +94,11 @@ public class SetCreator extends AbstractSetCreator {
             System.exit(1);
         }
     }
+    
+    
 
     /**
-     * Initializes the AllRecords[] array with the given parameters
+     * Initializes the AllRecords[] array with the given parameters.
      */
     public void initializeAllRecords(int numOfRecords, int numOfAttributes) {
         this.allRecords = new Record[numOfRecords];
@@ -103,7 +107,109 @@ public class SetCreator extends AbstractSetCreator {
         }
         //this.testSet = new RandRecordSet().getDecisionGroupsForTestSet(allRecords, 0, 1);
     }
+    
+    /**
+     * Fills the trainingSet with the pre-created trainingSets.
+     */
+    public void fillTrainingSet(){
+        for(int i = 0; i < 10; i++) {
+            readOrigTrainingSetFile(i + 1);
+        }
+    }
+    
+     /**
+     * Reads the testSet file
+     */
+    private void readOrigTrainingSetFile(int index) {
+        try (Scanner input = new Scanner(new File("trainingSets\\origTrainingSet" + index + ".txt"))) {
+            Queue<Record> newQueue = new LinkedList<>();
 
+            String name = "", decision = "";
+            ArrayList<Double> attributes = new ArrayList<>();
+
+            while (input.hasNext()) {
+                String line = input.nextLine();
+
+                String[] values = line.split(" ");
+
+                for (String thing : values) {
+                    if (thing.contains("R:")) {  //Get name
+                        name = thing;
+                    }
+                    if (thing.contains(",")) { // Get attributes
+                        attributes.add(Double.valueOf(thing.substring(0, thing.length() - 1)));
+                    }
+                    if (thing.contains("]")) {   // Get decision
+                        decision = thing.substring(0, thing.length() - 1);
+                    }
+                }
+
+                attributes.add(Double.valueOf(decision));
+
+                double[] registry = new double[attributes.size()];
+                int i = 0;
+                for (Double num : attributes) {
+                    registry[i++] = num;
+                }
+                attributes.clear();
+                newQueue.add(new Record(new Record(registry), name));
+            }
+
+            trainingSet[index - 1] = newQueue;
+
+            input.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("origTrainingSet File " + index + " was not found.");
+            System.exit(1);
+        } catch (NullPointerException e) {
+            System.out.println("Record array is not initialized.");
+            System.exit(1);
+        }
+    }
+
+    /**
+     * Prints a matrix into an output file
+     */
+    public void outputToFile(MatrixEnhanced[] matrices, String name) {
+
+        File output = new File(name + 1 + ".txt");
+
+        for (MatrixEnhanced matrix : matrices) {
+            if(matrix == null) {
+                break;
+            }
+            try {
+                int i = 1;
+                while (output.exists()) {
+                    output = new File(name + i++ + ".txt");
+                }
+                output.createNewFile();
+
+            } catch (IOException ex) {
+                System.out.print("Can't find directory");
+                System.exit(1);
+            }
+
+            try (PrintWriter write = new PrintWriter(output)) {
+
+                write.flush();
+                write.write("WeightVectorMatrix:\n");
+                write.write(matrix.printMatrix());
+                write.write("Combined Records: \n");
+                write.write(matrix.printCombined());
+                write.write("Changed Records: \n");
+                write.write(matrix.printDecChange());
+                write.write("Clusters: \n");
+                write.write(matrix.printWinners());
+                write.close();
+
+            } catch (FileNotFoundException e) {
+                System.out.println("Output file not found.");
+                System.exit(1);
+            }
+        }
+    }
+    
     /**
      * Updates the alpha by multiplying it with the beta
      */
@@ -169,48 +275,5 @@ public class SetCreator extends AbstractSetCreator {
 
     public Queue[] getTestSet() {
         return testSet;
-    }
-
-    /**
-     * Prints a matrix into an output file
-     */
-    public void outputToFile(MatrixEnhanced[] matrices, String name) {
-
-        File output = new File(name + 1 + ".txt");
-
-        for (MatrixEnhanced matrix : matrices) {
-            if(matrix == null) {
-                break;
-            }
-            try {
-                int i = 1;
-                while (output.exists()) {
-                    output = new File(name + i++ + ".txt");
-                }
-                output.createNewFile();
-
-            } catch (IOException ex) {
-                System.out.print("Can't find directory");
-                System.exit(1);
-            }
-
-            try (PrintWriter write = new PrintWriter(output)) {
-
-                write.flush();
-                write.write("WeightVectorMatrix:\n");
-                write.write(matrix.printMatrix());
-                write.write("Combined Records: \n");
-                write.write(matrix.printCombined());
-                write.write("Changed Records: \n");
-                write.write(matrix.printDecChange());
-                write.write("Clusters: \n");
-                write.write(matrix.printWinners());
-                write.close();
-
-            } catch (FileNotFoundException e) {
-                System.out.println("Output file not found.");
-                System.exit(1);
-            }
-        }
     }
 }

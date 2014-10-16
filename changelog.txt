@@ -1,6 +1,6 @@
-/////////////////////////
-//  SelfOrganizingMap  //
-/////////////////////////
+///////////////////////////
+//  SelfOrganizingMapV2  //
+///////////////////////////
 Written by Daniel Swain Jr
 
 1.0 	- 09/04/14
@@ -166,3 +166,10 @@ Written by Daniel Swain Jr
 
 	+ TODO:
 		- Negative values... How are they made?!
+
+2.0.01	- 10/16/14
+	
+	Summary:
+		The SetCreatorEnhanced.shootRecords() has been changed so that in the case of 
+		multiple rules being the neighbor of a record and also sharing the same decision,
+		the node with the largest cluster is chosen.
