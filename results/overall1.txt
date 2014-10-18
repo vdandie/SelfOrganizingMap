@@ -7,7 +7,7 @@ TestSet : 1
 1          | 1      | 8      |
 -------------------------------
 
-Overall Match percentage:  0.93|  # Matched 39|  # Not Matched 3|  Total : 42
+Overall Match percentage:  92.86|  # Matched 39|  # Not Matched 3|  Total : 42
 
 
 TestSet : 2
@@ -17,7 +17,7 @@ TestSet : 2
 1          | 2      | 9      |
 -------------------------------
 
-Overall Match percentage:  0.93|  # Matched 39|  # Not Matched 3|  Total : 42
+Overall Match percentage:  92.86|  # Matched 39|  # Not Matched 3|  Total : 42
 
 
 TestSet : 3
@@ -27,7 +27,7 @@ TestSet : 3
 1          | 4      | 9      |
 -------------------------------
 
-Overall Match percentage:  0.88|  # Matched 37|  # Not Matched 5|  Total : 42
+Overall Match percentage:  88.10|  # Matched 37|  # Not Matched 5|  Total : 42
 
 
 TestSet : 4
@@ -37,7 +37,7 @@ TestSet : 4
 1          | 7      | 10     |
 -------------------------------
 
-Overall Match percentage:  0.83|  # Matched 35|  # Not Matched 7|  Total : 42
+Overall Match percentage:  83.33|  # Matched 35|  # Not Matched 7|  Total : 42
 
 
 TestSet : 5
@@ -47,7 +47,7 @@ TestSet : 5
 1          | 1      | 6      |
 -------------------------------
 
-Overall Match percentage:  0.88|  # Matched 37|  # Not Matched 5|  Total : 42
+Overall Match percentage:  88.10|  # Matched 37|  # Not Matched 5|  Total : 42
 
 
 TestSet : 6
@@ -57,7 +57,7 @@ TestSet : 6
 1          | 4      | 7      |
 -------------------------------
 
-Overall Match percentage:  0.83|  # Matched 35|  # Not Matched 7|  Total : 42
+Overall Match percentage:  83.33|  # Matched 35|  # Not Matched 7|  Total : 42
 
 
 TestSet : 7
@@ -67,7 +67,7 @@ TestSet : 7
 1          | 1      | 3      |
 -------------------------------
 
-Overall Match percentage:  0.81|  # Matched 34|  # Not Matched 8|  Total : 42
+Overall Match percentage:  80.95|  # Matched 34|  # Not Matched 8|  Total : 42
 
 
 TestSet : 8
@@ -77,7 +77,7 @@ TestSet : 8
 1          | 1      | 5      |
 -------------------------------
 
-Overall Match percentage:  0.86|  # Matched 36|  # Not Matched 6|  Total : 42
+Overall Match percentage:  85.71|  # Matched 36|  # Not Matched 6|  Total : 42
 
 
 TestSet : 9
@@ -87,7 +87,7 @@ TestSet : 9
 1          | 2      | 9      |
 -------------------------------
 
-Overall Match percentage:  0.93|  # Matched 39|  # Not Matched 3|  Total : 42
+Overall Match percentage:  92.86|  # Matched 39|  # Not Matched 3|  Total : 42
 
 
 TestSet : 10
@@ -97,7 +97,7 @@ TestSet : 10
 1          | 1      | 7      |
 -------------------------------
 
-Overall Match percentage:  0.90|  # Matched 38|  # Not Matched 4|  Total : 42
+Overall Match percentage:  90.48|  # Matched 38|  # Not Matched 4|  Total : 42
 
 
 Total average match percentage: 87.86%

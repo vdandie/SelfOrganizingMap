@@ -10,13 +10,13 @@ import com.wiseaux.setCreator.SetCreatorEnhanced;
 public class TestSOM {
     
     public static void main(String[] args){
-        SetCreatorEnhanced som = new SetCreatorEnhanced();
-        som.runForPreCreatedSets();
-        som.trainPreCreatedSets();
+//        SetCreatorEnhanced som = new SetCreatorEnhanced();
+//        som.runForPreCreatedSets();
+//        som.trainPreCreatedSets();
         Intersector thing = new Intersector();
         thing.read(10);
         thing.run();
-        thing.resultsToFile("result");
+        //thing.resultsToFile("result");
         thing.totalResultsFile();
     }
         

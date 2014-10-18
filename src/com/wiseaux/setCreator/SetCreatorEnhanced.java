@@ -8,7 +8,7 @@ import java.util.Queue;
  * This class is responsible for sending records into the given matrix
  *
  * @author Daniel Swain
- * @version 1.2
+ * @version 2.0.01
  * @since 9/04/2014
  */
 public class SetCreatorEnhanced extends SetCreator {
@@ -84,7 +84,7 @@ public class SetCreatorEnhanced extends SetCreator {
     }
 
     /**
-     * Creates a queue to send to findWinner using the given queue array
+     * Creates a queue to send to doAlgorithm using the given queue array
      */
     private void shootRecords(Queue[] records, int numOfSets, MatrixEnhanced[] matrices) {
         //Currently only returns a single trainingSet
@@ -99,7 +99,7 @@ public class SetCreatorEnhanced extends SetCreator {
                 System.exit(1);
             }
             rSet.printQue(que, "trainingSets\\origTrainingSet");
-            findWinner(que, epochs, matrices[i]);
+            doAlgorithm(que, epochs, matrices[i]);
             matrices[i].checkForDuplicates();
             matrices[i].addCertainties();
             matrices[i].printForRead();
@@ -107,7 +107,7 @@ public class SetCreatorEnhanced extends SetCreator {
     }
 
     /**
-     * Creates a queue to send to findWinner using the given queue array
+     * Creates a queue to send to doAlgorithm using the given queue array
      */
     private void shootRecords_2(Queue[] records, int numOfSets, MatrixEnhanced[] matrices) {
         //Currently only returns a single trainingSet
@@ -122,7 +122,7 @@ public class SetCreatorEnhanced extends SetCreator {
                 System.exit(1);
             }
             //rSet.printQue(que, "trainingSets\\origTrainingSet");
-            findWinner(que, epochs, matrices[i]);
+            doAlgorithm(que, epochs, matrices[i]);
             matrices[i].checkForDuplicates();
             matrices[i].addCertainties();
             matrices[i].printForRead();
@@ -136,7 +136,7 @@ public class SetCreatorEnhanced extends SetCreator {
      *
      * @see isNeighbor
      */
-    private void findWinner(Queue<Record> que, int epochCount, MatrixEnhanced matrix) {
+    private void doAlgorithm(Queue<Record> que, int epochCount, MatrixEnhanced matrix) {
         int epoch = epochCount;
         if (que.isEmpty() && 1 == 0) {
             System.out.print("Que is empty");
@@ -206,9 +206,9 @@ public class SetCreatorEnhanced extends SetCreator {
         epoch -= 1;
 
         if (recordRemoved && epoch != 0) {
-            findWinner(rSet.removeRecords(que, removeFromQue), epoch, matrix);
+            doAlgorithm(rSet.removeRecords(que, removeFromQue), epoch, matrix);
         } else if (epoch != 0) {
-            findWinner(que, epoch, matrix);
+            doAlgorithm(que, epoch, matrix);
         }
     }
 

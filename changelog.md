@@ -1,26 +1,26 @@
-///////////////////////////
-//  SelfOrganizingMapV2  //
-///////////////////////////
-Written by Daniel Swain Jr
+#SelfOrganizingMapV2  
+##Change Log
 
-1.0 	- 09/04/14
+##Written by Daniel Swain Jr
+
+###1.0 	- 09/04/14
 
 	+ The project works, but its untidy. Fix iminent
 
-1.0.1 	- 09/09/14
+###1.0.1 	- 09/09/14
 
 	+ Added some functionalities.
 
-1.1 	- 09/16/14
+###1.1 	- 09/16/14
 
 	+ Complete overhaul of the structure of the code.
 	+ Much easier to read and stuff.
 
-1.1.1 	- 09/23/14
+###1.1.1 	- 09/23/14
 
 	+ Added more functionalities. 
 
-1.1.2 	- 09/30/14
+###1.1.2 	- 09/30/14
 
 	+ Fixed: RandRecordSet
 		- getLeftovers() 	
@@ -40,7 +40,7 @@ Written by Daniel Swain Jr
 		- When making more than one training set, the records start 
 			to come out funny. Training sets 1 and 2 look decent.
 
-1.1.3 	- 10/02/14
+###1.1.3 	- 10/02/14
 
 	+ Fixed the mysterious winner rule
 		- cleanMatrix()		
@@ -57,14 +57,14 @@ Written by Daniel Swain Jr
 		- Build new package containing classes to handle the
 			shooting of the test sets to the chosen training set
 		
-1.1.4	- 10/05/14
+###1.1.4	- 10/05/14
 
 	+ Trying to fix: Multiple TrainingSet Problem
 		- Currently when making multiple training sets, the records
 		 	change throughout the queues, i.e. the records altered in 
 		 	the previous run are the same records used over again.
 
-1.1.5	- 10/05/14
+###1.1.5	- 10/05/14
 
 	+ Kind of fixed: Multiple TrainingSet Problem
 		- Creating multiple trained sets used to be a problem,
@@ -76,7 +76,7 @@ Written by Daniel Swain Jr
 		- Duplicates are showing up again even though being ran 
 			through cleanMatrix()
 
-1.2.0 	- 10/07/14
+###1.2.0 	- 10/07/14
 
 	+ Kind of fixed: Certainty Factor/Cover Problem
 		- If a Rule(aka Seed) had it's dominant decision changed
@@ -106,7 +106,7 @@ Written by Daniel Swain Jr
 		- implement run() in Intersector
 		- Do something about the semi-duplicates
 
-1.2.1 	- 10/08/14
+###1.2.1 	- 10/08/14
 	
 	+ Created:
 		- Intersector.runAlgorithm() - Sends each test record against
@@ -129,7 +129,7 @@ Written by Daniel Swain Jr
 		- Make into files
 		- Other things...
 
-1.2.2 	- 10/08/14
+###1.2.2 	- 10/08/14
 
 	+ Created:
 		-Intersector.results() - ArrayList<String> that contains the formatted
@@ -144,7 +144,7 @@ Written by Daniel Swain Jr
 		- The theres an offset because printing of the files starts at
 			1, not a huge problem, but should go back and fix.
 
-1.2.3 	- 10/09/14
+###1.2.3 	- 10/09/14
 
 	+Created:
 		-Intersector.totalResultsFile() - takes the totals of all tests and
@@ -154,7 +154,7 @@ Written by Daniel Swain Jr
 		- Round off the records in the training sets to the thousandths 
 			after training is complete and re-clean matrix
 
-1.2.4	- 10/13/14
+###1.2.4	- 10/13/14
 
 	+ Created:
 		- Matrix.round(double, int) - rounds the given value to the given number of places
@@ -167,9 +167,31 @@ Written by Daniel Swain Jr
 	+ TODO:
 		- Negative values... How are they made?!
 
-2.0.01	- 10/16/14
+###2.0.01	- 10/16/14
 	
 	Summary:
 		The SetCreatorEnhanced.shootRecords() has been changed so that in the case of 
 		multiple rules being the neighbor of a record and also sharing the same decision,
 		the node with the largest cluster is chosen.
+
+	+ Changed the name of:
+		- SetCreatorEnhanced.findWinner() => doAlgorithm()
+		- MatrixEnhanced.winners => clusters
+
+	+ Created:
+		- SetCreator.readOrigTrainingSetFile() - reads in the origTrainingSet files from
+		the trainingSets folder and adds them to the trainingSet array.
+		- SetCreatorEnhanced.runForPreCreatedSets() - does the same as run except that
+		it's for pre-created training sets
+		- SetCreatorEnhanced.trainPreCreatedSets() - trains all pre-created training sets
+		- SetCreatorEnhanced.shootRecords_2() - does the same as shootRecords except that
+		it's for pre-created training sets and does not need to use RandomSet.createQueue()
+		and also does not print the origTrainingSets
+		- MatrixEnhanced.getClusterSize() - returns the size of a rule's cluster
+
+	+ Changes in:
+		- SetCreatorEnahnced.doAlgorithm() - Case 3 has further constraints: if there are
+		multiple winners, check their decisions. If there are still multiple decision 
+		matching winners, compare cluster sizes. The rule with the largest cluster size
+		is then updated by the record.
+

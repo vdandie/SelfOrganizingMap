@@ -149,7 +149,7 @@ public class Intersector {
         );
 
         result.add("\nOverall Match percentage:  "
-                + String.format("%.2f", ((double) count / (double) testQueue.size()))
+                + String.format("%.2f", ((double) count / (double) testQueue.size())*100)
                 + "|  # Matched " + count
                 + "|  # Not Matched " + (testQueue.size() - count)
                 + "|  Total : " + testQueue.size()
