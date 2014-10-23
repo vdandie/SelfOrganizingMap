@@ -18,6 +18,7 @@ $RECYCLE.BIN/
 testSets
 trainingSets
 results
+build
 
 # =========================
 # Operating System Files
