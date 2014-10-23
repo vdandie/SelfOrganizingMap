@@ -32,7 +32,7 @@ public class Intersector {
      * Holds results for each of the runs.
      */
     ArrayList[] results;
-    
+
     /**
      * Holds the average results
      */
@@ -90,12 +90,21 @@ public class Intersector {
         Queue<Record> testQueue = testSets[setNumber];
         Queue<Record> trainingQueue = trainingSets[setNumber];
         ArrayList<String> result = new ArrayList<>();
-        int falsePos = 0, truePos = 0, falseNeg = 0, trueNeg = 0;
+        int falsePos = 0, truePos = 0, falseNeg = 0, trueNeg = 0, notPred = 0;
         result.add("TestSet : " + setNumber + "\n");
         //System.out.println("TestSet : " + setNumber);
 
         int count = 0;
         double temp;
+
+        
+        
+        
+        
+        
+        
+        
+        ArrayList<Competitor> comp = new ArrayList<>();
         for (Record test : testQueue) {
             double min = Double.MAX_VALUE;
             int name = 0;
@@ -106,36 +115,89 @@ public class Intersector {
                 temp = sumAbsDif(test, rule);
                 if (temp < min) {
                     min = temp;
-                    name = rule.getIntName();
-                    match = test.hasSameDecision(rule);
+                    
+                    Competitor newComp
+                            = new Competitor(min,
+                                    rule.getDecision(),
+                                    rule.getIntName(),
+                                    test.hasSameDecision(rule));
+                    comp.add(newComp);
                 }
             }
 
-            if (match) {
+            int[] indexes = new int[comp.size()];
+            for (int i = 0; i < indexes.length; i++) {
+                indexes[i] = -1;
+            }
+
+            int minCounter = 0;
+            for (int i = 0; i < comp.size(); i++) {
+                if (comp.get(i).min == min) {
+                    minCounter++;
+                    indexes[i] = i;
+                } else {
+                    indexes[i] = -1;
+                }
+            }
+
+            boolean predictable = true;
+            if (minCounter > 1) {
+                int dec0 = 0, dec1 = 0;
+                for (int i : indexes) {
+                    if (i == -1) {
+                        //Do nothing
+                    } else if (comp.get(i).decision == 0) {
+                        name = i;
+                        dec0++;
+                    } else {
+                        dec1++;
+                    }
+                }
+
+                if (dec0 > dec1) { //Take the dominant decision
+                    comp.get(name).match = test.getDecision() == 0;
+                    comp.get(name).decision = 0;
+                } else if (dec0 < dec1) {
+                    comp.get(name).match = test.getDecision() == 1;
+                    comp.get(name).decision = 1;
+                } else if (dec0 == dec1) {
+                    predictable = false;
+                }
+
+            } 
+            
+            if (comp.get(name).match && predictable) { // Matched and predictable
                 count++;
                 if (test.getDecision() == 0) {
                     truePos += 1;
                 } else {
                     falsePos += 1;
                 }
-            } else if (!match) {
+            } else if (predictable) { // Not matched, yet predictable
                 if (test.getDecision() == 1) {
                     trueNeg += 1;
                 } else {
                     falseNeg += 1;
                 }
-
             }
 
-            result.add(String.format("Test Record : %-6s | Min Value: %-3s "
-                    + "| Rule : %-5s | Match: %-5s | %-6s",
-                    String.format("%5s", test.getName()),
-                    String.format("%.2f", min),
-                    String.format("R:%2s", name),
-                    String.format("%s", match),
-                    String.format("D: %.0f", test.getDecision()))
-                    + "\n"
-            );
+            if (predictable) {
+                result.add(String.format("Test Record : %-6s | Min Value: %-3s "
+                        + "| Rule : %-5s | Match: %-5s | Test %-6s",
+                        String.format("%-5s", test.getName()),
+                        String.format("%.2f", min),
+                        String.format("R:%2s", comp.get(name).name),
+                        String.format("%s", comp.get(name).match),
+                        String.format("D: %.0f", test.getDecision()))
+                        + " : " + comp.get(name).decision
+                        + "\n"
+                );
+            } else {
+                result.add("Test Record " + test.getName() + " is not predictable "
+                        + "\n"
+                );
+                notPred++;
+            }
             //System.out.println();
         }
 
@@ -149,15 +211,16 @@ public class Intersector {
         );
 
         result.add("\nOverall Match percentage:  "
-                + String.format("%.2f", ((double) count / (double) testQueue.size())*100)
+                + String.format("%.2f", ((double) count / (double) testQueue.size()) * 100)
                 + "|  # Matched " + count
                 + "|  # Not Matched " + (testQueue.size() - count)
+                + "|  # Not Predicted " + notPred
                 + "|  Total : " + testQueue.size()
                 + "\n"
         );
-        
+
         averages.add(((double) count / (double) testQueue.size()));
-        
+
         //System.out.println(count + " " + testQueue.size());
         results[setNumber] = result;
     }
@@ -166,8 +229,7 @@ public class Intersector {
      * Gets the sum of the absolute value differences in the records given.
      */
     double sumAbsDif(Record testRecord, Record rule) {
-        double sum = 0;
-        double num = 0;
+        double num, sum = 0;
         for (int i = 0; i < testRecord.getSize(); i++) {
             num = Math.abs(testRecord.getAttribute(i) - rule.getAttribute(i));
             if (num < 1) {
@@ -178,13 +240,13 @@ public class Intersector {
         }
         return sum;
     }
-    
-    double calcAvg(){
+
+    double calcAvg() {
         double avg = 0;
-        for(double dub: averages){
+        for (double dub : averages) {
             avg += dub;
         }
-        return avg/averages.size();
+        return avg / averages.size();
     }
 
     /**
@@ -344,14 +406,36 @@ public class Intersector {
                 write.write(line.get(line.size() - 2) + "\n");
                 write.write(line.get(line.size() - 1));
             }
-            write.write("\n\nTotal average match percentage: "+ 
-                    String.format("%.2f",calcAvg() * 100 )+ "%");
+            write.write("\n\nTotal average match percentage: "
+                    + String.format("%.2f", calcAvg() * 100) + "%");
             write.close();
 
         } catch (FileNotFoundException e) {
             System.out.println("Output file not found.");
             System.exit(1);
         }
+
+    }
+}
+
+/**
+ * Small class to handle finding the min values.
+ */
+class Competitor {
+
+    double min, decision;
+    int name;
+    boolean match;
+
+    Competitor() {
+
+    }
+
+    Competitor(double min, double decision, int name, boolean match) {
+        this.min = min;
+        this.decision = decision;
+        this.name = name;
+        this.match = match;
 
     }
 }
