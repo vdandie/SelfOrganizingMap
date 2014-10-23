@@ -32,7 +32,7 @@ public class SetCreatorEnhanced extends SetCreator {
         readRecords();
         rSet = new RandRecordSet(allRecords);
         testSet = rSet.createTestSet(allRecords, 0, 1);
-        trainingSet = rSet.createTrainingSet(testSet);
+        trainingSet = rSet.createTrainingSet(testSet, 0.1); // using 90%
         matrices = new MatrixEnhanced[trainingSet.length];
 
         testSetsToFiles();
@@ -45,6 +45,21 @@ public class SetCreatorEnhanced extends SetCreator {
         readConfig();
         rSet = new RandRecordSet();
     }
+    
+    /**
+     * Reads the configuration and trains k-1 records
+     */
+    public void runForSpecialSet(){
+        readConfig();
+        initializeAllRecords(numOfRecords, numOfAttributes);
+        readRecords();
+        rSet = new RandRecordSet(allRecords);
+        testSet = rSet.createSpecialTestSet(allRecords, 0, 1);
+        trainingSet = rSet.createSpecialTrainingSet(testSet, 0.01); // using 99%
+        matrices = new MatrixEnhanced[trainingSet.length];
+        
+        specialTestSetsToFiles();
+    }
 
     /**
      * Puts the testSets into files
@@ -52,7 +67,7 @@ public class SetCreatorEnhanced extends SetCreator {
     public void testSetsToFiles() {
         Queue[] temp = new Queue[testSet.length];
         for (int i = 0; i < temp.length / 2; i++) {
-            temp[i] = rSet.createQueue(testSet, i);
+            temp[i] = rSet.createQueue(testSet, i, testSet.length);
         }
         testSet = temp;
         new File("testSets").mkdir();
@@ -60,6 +75,32 @@ public class SetCreatorEnhanced extends SetCreator {
         for (int i = 0; i < testSet.length / 2; i++) {
             rSet.printQue(testSet[i], "testSets\\testSet");
         }
+    }
+    
+    /**
+     * Puts the specialTestSets into files
+     */
+    public void specialTestSetsToFiles() {
+        Queue<Record> tmp = new LinkedList<>();
+        
+        for(Queue<Record> test : testSet) {
+            tmp.addAll(test);
+        }
+        rSet.setNamesForRecords(tmp);
+        
+        new File("testSets").mkdir();
+
+        rSet.printQue(tmp, "testSets\\specialTestSet");
+        
+    }
+
+    /**
+     * Access shootRecords() function in order to train the trainingSet
+     */
+    public void train(int numOfSets) {
+        new File("trainingSets").mkdir();
+        shootRecords(trainingSet, numOfSets, matrices);
+        this.outputToFile(matrices, "trainingSets\\trainingSetWithData");
     }
 
     /**
@@ -73,23 +114,22 @@ public class SetCreatorEnhanced extends SetCreator {
         shootRecords_2(trainingSet, trainingSet.length, matrices);
         this.outputToFile(matrices, "trainingSets\\trainingSetWithData");
     }
-
+    
     /**
-     * Access shootRecords() function in order to train the trainingSet
+     * Access shootRecords() using a set of k-1 records
      */
-    public void train(int numOfSets) {
+    public void trainAllButOneRecord() {
         new File("trainingSets").mkdir();
-        shootRecords(trainingSet, numOfSets, matrices);
+        shootRecords_3(trainingSet, trainingSet.length/2, matrices);
         this.outputToFile(matrices, "trainingSets\\trainingSetWithData");
     }
-
+    
     /**
      * Creates a queue to send to doAlgorithm using the given queue array
      */
     private void shootRecords(Queue[] records, int numOfSets, MatrixEnhanced[] matrices) {
-        //Currently only returns a single trainingSet
         for (int i = 0; i < numOfSets; i++) {
-            Queue<Record> que = rSet.createQueue(records, i);
+            Queue<Record> que = rSet.createQueue(records, i, records.length);
 
             matrices[i] = new MatrixEnhanced();
             resetAlpha();
@@ -110,7 +150,6 @@ public class SetCreatorEnhanced extends SetCreator {
      * Creates a queue to send to doAlgorithm using the given queue array
      */
     private void shootRecords_2(Queue[] records, int numOfSets, MatrixEnhanced[] matrices) {
-        //Currently only returns a single trainingSet
         for (int i = 0; i < numOfSets; i++) {
             Queue<Record> que = records[i];
 
@@ -122,6 +161,28 @@ public class SetCreatorEnhanced extends SetCreator {
                 System.exit(1);
             }
             //rSet.printQue(que, "trainingSets\\origTrainingSet");
+            doAlgorithm(que, epochs, matrices[i]);
+            matrices[i].checkForDuplicates();
+            matrices[i].addCertainties();
+            matrices[i].printForRead();
+        }
+    }
+    
+    /**
+     * Creates a queue to send to doAlgorithm using the given queue array
+     */
+    private void shootRecords_3(Queue[] records, int numOfSets, MatrixEnhanced[] matrices) {
+         for (int i = 0; i < numOfSets; i++) {
+            Queue<Record> que = rSet.createQueue(records, i, records.length);
+
+            matrices[i] = new MatrixEnhanced();
+            resetAlpha();
+
+            if (que.isEmpty()) {
+                System.out.println("There are no records to send!");
+                System.exit(1);
+            }
+            rSet.printQue(que, "trainingSets\\origTrainingSet");
             doAlgorithm(que, epochs, matrices[i]);
             matrices[i].checkForDuplicates();
             matrices[i].addCertainties();
