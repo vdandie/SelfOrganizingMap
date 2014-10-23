@@ -195,3 +195,16 @@
 		matching winners, compare cluster sizes. The rule with the largest cluster size
 		is then updated by the record.
 
+###2.0.02 	- 10/23/14
+	
+	+ Summary:
+		Adding functionalities for k-1 case: 1 test record is created and the rest are used
+		as a training set. The trainingSet is made up of 1 - the smaller decision groups value
+
+	+ Created:
+		-RandRecordSet.createSpecialTestSet() - Creates a queue array containing queues of
+		each individual record.
+
+	Changes in:
+		-RandRecordSet.createTrainingSet() - changed the fixed values to variables.
+		-RandRecordSet.getLeftovers() - removed "int dec" from parameters.
