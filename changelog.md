@@ -205,6 +205,24 @@
 		-RandRecordSet.createSpecialTestSet() - Creates a queue array containing queues of
 		each individual record.
 
-	Changes in:
+	+ Changes in:
 		-RandRecordSet.createTrainingSet() - changed the fixed values to variables.
 		-RandRecordSet.getLeftovers() - removed "int dec" from parameters.
+
+###2.0.03 	- 10/23/14
+
+	+ Changed the name of:
+		clusters => regions
+
+	+ Created:
+		SetCreatorEnhanced.runForSpecialSet() - run method for the k-1 case.
+		SetCreatorEnhanced.specialTestSetsToFiles() - testSets to a single file.
+		SetCreatorEnhanced.trainAllButOneRecord() - train for the k-1 case.
+		SetCreatorEnhanced.shootRecords_3() - shoots records for the k-1 case.
+		RandRecordSet.createSpecialTrainingSet() - creates the training sets for the k-1 case.
+
+	+ Changes in:
+		Matrix.Matrix() - increased size of recordSet (was 200, now 1000)
+		MatrixEnhanced.MatrixEnhanced() - increased size of regions/cf (was 190, now 1000)
+
+
