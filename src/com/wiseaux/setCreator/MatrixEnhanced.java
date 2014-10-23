@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  * This class will handle storing the records of each winner into a HashMap as
- well as the decisions of the clusters to calculate the certainty factor.
+ well as the decisions of the regions to calculate the certainty factor.
  *
  * @author Daniel Swain
  */
@@ -16,7 +16,7 @@ public class MatrixEnhanced extends Matrix {
      * Each record that updates a seed kept in the matrix is then stored in this
      * map so that they may be found again.
      */
-    private final Map<Integer, HashSet<Record>> clusters;
+    private final Map<Integer, HashSet<Record>> regions;
 
     /**
      * All decisions are kept here to be used to calculate the certainty factor
@@ -32,10 +32,10 @@ public class MatrixEnhanced extends Matrix {
 
     MatrixEnhanced() {
         this.combinedWeightVector = new HashMap<>();
-        this.clusters = new HashMap<>();
+        this.regions = new HashMap<>();
         this.certaintyFactors = new HashMap<>();
-        for (int i = 0; i < 190; i++) {
-            this.clusters.put(i, new HashSet<Record>());
+        for (int i = 0; i < 1000; i++) {
+            this.regions.put(i, new HashSet<Record>());
             this.certaintyFactors.put(i, new HashSet<Record>());
         }
     }
@@ -44,7 +44,7 @@ public class MatrixEnhanced extends Matrix {
      * Adds a the record to the identified index.
      */
     public void addWinner(Record record, int index) {
-        this.clusters.get(index).add(record);
+        this.regions.get(index).add(record);
         this.certaintyFactors.get(index).add(record);
     }
 
@@ -90,7 +90,7 @@ public class MatrixEnhanced extends Matrix {
 
         sum = count_1 + count_2;
         cover[1] = sum;
-        if (count_1 == 0 && count_2 == 0) {     //If the seed had no clusters, return 1
+        if (count_1 == 0 && count_2 == 0) {     //If the seed had no regions, return 1
             return 1.0;
         }
 
@@ -106,17 +106,17 @@ public class MatrixEnhanced extends Matrix {
     }
 
     /**
-     * Returns the linked list of clusters at the given index.
+     * Returns the linked list of regions at the given index.
      */
     public HashSet<Record> getClusterList(int index) {
-        return this.clusters.get(index);
+        return this.regions.get(index);
     }
     
     /**
      * Returns the size of the cluster at the given index.
      */
     public int getClusterSize(int index) {
-        return this.clusters.get(index).size();
+        return this.regions.get(index).size();
     }
 
     /**
@@ -161,14 +161,14 @@ public class MatrixEnhanced extends Matrix {
     }
 
     /**
-     * Combines the clusters & certainties of any two records given and clears
+     * Combines the regions & certainties of any two records given and clears
      * the key of the second.
      */
     public void combineRecords(Record first, Record second) {
 
-        HashSet<Record> combineWinners = this.clusters.get(second.getIntName());
-        this.clusters.get(first.getIntName()).addAll(combineWinners);
-        this.clusters.get(second.getIntName()).clear();
+        HashSet<Record> combineWinners = this.regions.get(second.getIntName());
+        this.regions.get(first.getIntName()).addAll(combineWinners);
+        this.regions.get(second.getIntName()).clear();
 
         HashSet<Record> combineCertainties
                 = this.certaintyFactors.get(second.getIntName());
@@ -181,24 +181,24 @@ public class MatrixEnhanced extends Matrix {
 
     /**
      * To be called only after the certainty factors are set. Cleans the matrix of
- any records with 0/0 cover. Cleans the clusters of any clusters that aren't
+ any records with 0/0 cover. Cleans the regions of any regions that aren't
  in the matrix.
      */
     private void cleanMatrix() {
         for (int i = 0; i < getSize(); i++) {
             if (this.certaintyFactors.get(recordSet[i].getIntName()).isEmpty() 
-                    && this.clusters.get(recordSet[i].getIntName()).isEmpty()) {
+                    && this.regions.get(recordSet[i].getIntName()).isEmpty()) {
                 removeRecord(i);
                 i--;
             }
         }
         
-        for (int i = 0; i < this.clusters.size(); i++) {
-            HashSet<Record> list = this.clusters.get(i);
+        for (int i = 0; i < this.regions.size(); i++) {
+            HashSet<Record> list = this.regions.get(i);
 
             if (!list.isEmpty()) {
                 if(this.findRecord(i) < 0) {
-                    this.clusters.get(i).clear();
+                    this.regions.get(i).clear();
                 }
             }
          }
@@ -279,15 +279,15 @@ public class MatrixEnhanced extends Matrix {
     }
 
     /**
-     * Returns a string of the clusters made for readability.
+     * Returns a string of the regions made for readability.
      */
     public String printWinners() {
         String print = "\n";
         String format = "%-14s";
         String format_2 = "%-4s %-7s";
 
-        for (int i = 0; i < this.clusters.size(); i++) {
-            HashSet<Record> list = this.clusters.get(i);
+        for (int i = 0; i < this.regions.size(); i++) {
+            HashSet<Record> list = this.regions.get(i);
 
             if (!list.isEmpty()) {
 
