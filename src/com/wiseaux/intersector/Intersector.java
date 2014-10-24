@@ -55,10 +55,21 @@ public class Intersector {
      */
     public void read(int fileNumber) {
         times = fileNumber;
-
+        
         for (int i = 0; i < fileNumber; i++) {
             readTrainingSetFile(i + 1);
             readTestSetFile(i + 1);
+        }
+    }
+    
+    public void readSpecialCase() {
+        times = 427;
+        testSets = new Queue[times + 1];
+        trainingSets = new Queue[times + 1];
+        results = new ArrayList[times + 1];
+        readSpecialTestSetFile();
+        for(int i = 1; i < times; i++) {
+            readTrainingSetFile(i);
         }
     }
 
@@ -83,6 +94,28 @@ public class Intersector {
         }
     }
 
+    
+    /**
+     * Runs the tests.
+     */
+    public void run_2() {
+        if (testSets.length < 1 || trainingSets.length < 1) {
+            System.out.println("Error: Test or Training set is empty.");
+            System.exit(0);
+        }
+        for (int i = 0; i < times; i++) {
+            if (testSets[i] == null) {
+                System.out.println("Null testSet at " + i);
+                continue;
+            }
+            if (trainingSets[i] == null) {
+                System.out.println("Null trainingSet at " + i);
+                continue;
+            }
+            runAlgorithm(i);
+        }
+    }
+    
     /**
      * Sends the test set record at the given training set.
      */
@@ -94,16 +127,8 @@ public class Intersector {
         result.add("TestSet : " + setNumber + "\n");
         //System.out.println("TestSet : " + setNumber);
 
-        int count = 0;
+        int count = 0, outerCount = 0;
         double temp;
-
-        
-        
-        
-        
-        
-        
-        
         ArrayList<Competitor> comp = new ArrayList<>();
         for (Record test : testQueue) {
             double min = Double.MAX_VALUE;
@@ -115,21 +140,19 @@ public class Intersector {
                 temp = sumAbsDif(test, rule);
                 if (temp < min) {
                     min = temp;
-                    
-                    Competitor newComp
-                            = new Competitor(min,
-                                    rule.getDecision(),
-                                    rule.getIntName(),
-                                    test.hasSameDecision(rule));
-                    comp.add(newComp);
+                    name =  rule.getIntName();
+                    match = test.hasSameDecision(rule);
+                    comp.add(new Competitor(min,rule));
                 }
             }
-
+            
+            //Initialize indexes
             int[] indexes = new int[comp.size()];
             for (int i = 0; i < indexes.length; i++) {
                 indexes[i] = -1;
             }
-
+            
+            //Count the records with the same min
             int minCounter = 0;
             for (int i = 0; i < comp.size(); i++) {
                 if (comp.get(i).min == min) {
@@ -139,14 +162,14 @@ public class Intersector {
                     indexes[i] = -1;
                 }
             }
-
+            
             boolean predictable = true;
             if (minCounter > 1) {
                 int dec0 = 0, dec1 = 0;
                 for (int i : indexes) {
                     if (i == -1) {
                         //Do nothing
-                    } else if (comp.get(i).decision == 0) {
+                    } else if (comp.get(i).rec.getDecision() == 0) {
                         name = i;
                         dec0++;
                     } else {
@@ -155,25 +178,29 @@ public class Intersector {
                 }
 
                 if (dec0 > dec1) { //Take the dominant decision
-                    comp.get(name).match = test.getDecision() == 0;
-                    comp.get(name).decision = 0;
+                    name = comp.get(name).rec.getIntName();
+                    match = test.getDecision() == 0;
+                    comp.get(comp.size() - 1 ).dec = 0;
                 } else if (dec0 < dec1) {
-                    comp.get(name).match = test.getDecision() == 1;
-                    comp.get(name).decision = 1;
+                    name = comp.get(name).rec.getIntName();
+                    match = test.getDecision() == 1;
+                    comp.get(comp.size() - 1 ).dec = 1;
                 } else if (dec0 == dec1) {
                     predictable = false;
                 }
 
             } 
             
-            if (comp.get(name).match && predictable) { // Matched and predictable
+            if (match && predictable) { // Matched and predictable
                 count++;
+                outerCount++;
                 if (test.getDecision() == 0) {
                     truePos += 1;
                 } else {
                     falsePos += 1;
                 }
             } else if (predictable) { // Not matched, yet predictable
+                outerCount++;
                 if (test.getDecision() == 1) {
                     trueNeg += 1;
                 } else {
@@ -186,10 +213,10 @@ public class Intersector {
                         + "| Rule : %-5s | Match: %-5s | Test %-6s",
                         String.format("%-5s", test.getName()),
                         String.format("%.2f", min),
-                        String.format("R:%2s", comp.get(name).name),
-                        String.format("%s", comp.get(name).match),
+                        String.format("R:%2s", name),
+                        String.format("%s", match),
                         String.format("D: %.0f", test.getDecision()))
-                        + " : " + comp.get(name).decision
+                        + " : " + comp.get(comp.size()-1).rec.getDecision()
                         + "\n"
                 );
             } else {
@@ -204,22 +231,24 @@ public class Intersector {
         //True/False Pos/Neg table
         String tableFormat = "%-10s | %-6s | %-6s |";
         String line = "-------------------------------";
-        result.add(String.format(tableFormat, " ", "0", "1") + "\n" + line
-                + "\n" + String.format(tableFormat, "0", truePos, trueNeg)
-                + "\n" + String.format(tableFormat, "1", falseNeg, falsePos)
+        result.add(String.format(tableFormat, " ", "1", "0") + "\n" + line
+                + "\n" + String.format(tableFormat, "1", falsePos, falseNeg)
+                + "\n" + String.format(tableFormat, "0",  trueNeg, truePos)
+                + "\n" + line
+                + "\n" + String.format(tableFormat, " ", falsePos+ "/" + (trueNeg+falsePos), truePos+"/"+(falseNeg+truePos))
                 + "\n" + line
         );
 
         result.add("\nOverall Match percentage:  "
-                + String.format("%.2f", ((double) count / (double) testQueue.size()) * 100)
+                + String.format("%.2f", ((double) count / (double) outerCount) * 100)
                 + "|  # Matched " + count
-                + "|  # Not Matched " + (testQueue.size() - count)
+                + "|  # Not Matched " + (outerCount-count)
                 + "|  # Not Predicted " + notPred
                 + "|  Total : " + testQueue.size()
                 + "\n"
         );
 
-        averages.add(((double) count / (double) testQueue.size()));
+        averages.add(((double) count / ((double) outerCount + (double) notPred)));
 
         //System.out.println(count + " " + testQueue.size());
         results[setNumber] = result;
@@ -331,6 +360,59 @@ public class Intersector {
         }
     }
 
+    
+        /**
+     * Reads the testSet file
+     */
+    private void readSpecialTestSetFile() {
+        try (Scanner input = new Scanner(new File("testSets\\specialTestSet1.txt"))) {
+            Queue<Record> newQueue;
+            int index = 0;
+            
+            String name = "", decision = "";
+            ArrayList<Double> attributes = new ArrayList<>();
+
+            while (input.hasNext()) {
+                newQueue = new LinkedList<>();
+                
+                String line = input.nextLine();
+
+                String[] values = line.split(" ");
+
+                for (String thing : values) {
+                    if (thing.contains("R:")) {  //Get name
+                        name = thing;
+                    }
+                    if (thing.contains(",")) { // Get attributes
+                        attributes.add(Double.valueOf(thing.substring(0, thing.length() - 1)));
+                    }
+                    if (thing.contains("]")) {   // Get decision
+                        decision = thing.substring(0, thing.length() - 1);
+                    }
+                }
+
+                attributes.add(Double.valueOf(decision));
+
+                double[] registry = new double[attributes.size()];
+                int i = 0;
+                for (Double num : attributes) {
+                    registry[i++] = num;
+                }
+                attributes.clear();
+                newQueue.add(new Record(new Record(registry), name));
+                testSets[index++] = newQueue;
+            }
+
+            input.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("SpecialTestSetFile was not found.");
+            System.exit(1);
+        } catch (NullPointerException e) {
+            System.out.println("Record array is not initialized.");
+            System.exit(1);
+        }
+    }
+    
     /**
      * Prints the results into a directory.
      */
@@ -416,6 +498,52 @@ public class Intersector {
         }
 
     }
+    
+    
+    /**
+     * Prints an overall.txt that has overall results for all results
+     */
+    public void specialTotalResultsFile() {
+        File output = new File("results");
+        output.mkdir();
+
+        output = new File("results\\xoverall.txt");
+
+        try {
+            int i = 1;
+            while (output.exists()) {
+                output = new File("results\\xoverall" + i++ + ".txt");
+            }
+            output.createNewFile();
+
+        } catch (IOException ex) {
+            System.out.print("OutputToFile can't find directory");
+            System.exit(1);
+        }
+
+        try (PrintWriter write = new PrintWriter(output)) {
+
+            write.flush();
+            for (ArrayList<String> line : results) {
+                if (line == null) {
+                    continue;
+                }
+                write.write("\n\n");
+                write.write(line.get(0));
+                write.write(line.get(1));
+                write.write(line.get(line.size() - 2) + "\n");
+                write.write(line.get(line.size() - 1));
+            }
+            write.write("\n\nTotal average match percentage: "
+                    + String.format("%.2f", calcAvg() * 100) + "%");
+            write.close();
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Output file not found.");
+            System.exit(1);
+        }
+
+    }
 }
 
 /**
@@ -423,19 +551,17 @@ public class Intersector {
  */
 class Competitor {
 
-    double min, decision;
-    int name;
-    boolean match;
+    double min;
+    Record rec;
+    double dec;
 
     Competitor() {
 
     }
 
-    Competitor(double min, double decision, int name, boolean match) {
+    Competitor(double min, Record rec) {
         this.min = min;
-        this.decision = decision;
-        this.name = name;
-        this.match = match;
-
+        this.rec = rec;
+        this.dec = rec.getDecision();
     }
 }
