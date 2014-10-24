@@ -57,7 +57,6 @@ public class RandRecordSet {
         Queue<Record> queue = new LinkedList<>();
         queue.addAll(Arrays.asList(shuffleArray(records)));
         return queue;
-
     }
 
     /**
@@ -72,10 +71,10 @@ public class RandRecordSet {
     /**
      * Returns a queue filled with records from a Queue[] at index.
      */
-    public Queue<Record> createQueue(Queue[] groups, int index) {
+    public Queue<Record> createQueue(Queue[] groups, int index, int offset) {
         Queue<Record> queue = new LinkedList<>();
         queue.addAll(new LinkedList<>(groups[index]));
-        queue.addAll(new LinkedList<>(groups[index + 10]));
+        queue.addAll(new LinkedList<>(groups[index + offset / 2]));
         return shuffleQueue(queue);
     }
 
@@ -128,7 +127,7 @@ public class RandRecordSet {
         }
     }
 
-    private void setNamesForRecords(Queue<Record> queue) {
+    public void setNamesForRecords(Queue<Record> queue) {
         int i = 1;
         for (Record record : queue) {
             record.setName(i);
@@ -181,6 +180,22 @@ public class RandRecordSet {
     }
 
     /**
+     * Returns a queue of 426 unique groups that contain a singleRecord aRecord.
+     */
+    public Queue[] createSpecialTestSet(Record[] records, int decVal_0, int decVal_1) {
+        splitRecords(records, decVal_0, decVal_1);
+        Queue[] groups = new Queue[records.length];
+        int i = 0;
+        for (Record aRecord : records) {
+            Queue<Record> singleRecord = new LinkedList<>();
+            singleRecord.add(aRecord);
+            groups[i++] = singleRecord;
+        }
+
+        return groups;
+    }
+
+    /**
      * Grab random records from the queue equal to 10% of the length of the
      * original queue.
      */
@@ -217,18 +232,18 @@ public class RandRecordSet {
      * Takes values that aren't in the current testSet and returns an equal
      * amount of records from decision_0 and decision_1.
      */
-    public Queue[] createTrainingSet(Queue[] groups) {
-        Queue[] trainingGroups = new Queue[20];
+    public Queue[] createTrainingSet(Queue[] groups, double percent) {
+        Queue[] trainingGroups = new Queue[groups.length];
 
-        int size = getSizeDifference(decision_0, decision_1);
+        int size = getSizeDifference(decision_0, decision_1, percent);
         int i = 0;
         for (Queue<Record> queue : groups) {
-            if(i >= 10) {
-                Queue<Record> newTrainingSet = getLeftovers(decision_1, queue, size, i/10);
+            if (i >= (groups.length / 2)) {
+                Queue<Record> newTrainingSet = getLeftovers(decision_1, queue, size);
                 trainingGroups[i] = newTrainingSet;
-                
+
             } else {
-                Queue<Record> newTrainingSet = getLeftovers(decision_0, queue, size, i/10);
+                Queue<Record> newTrainingSet = getLeftovers(decision_0, queue, size);
                 trainingGroups[i] = newTrainingSet;
             }
             i++;
@@ -238,25 +253,46 @@ public class RandRecordSet {
     }
 
     /**
+     * Takes values that aren't in the current testSet and returns an equal
+     * amount of records from decision_0 and decision_1.
+     */
+    public Queue[] createSpecialTrainingSet(Queue[] groups, double percent) {
+        Queue[] trainingGroups = new Queue[groups.length * 2];
+
+        int size = getSizeDifference(decision_0, decision_1, percent);
+        int i = 0;
+        for (Queue<Record> queue : groups) {
+            Queue<Record> newTrainingSet = getLeftovers(decision_1, queue, size);
+            trainingGroups[i + groups.length] = newTrainingSet;
+            
+            newTrainingSet = getLeftovers(decision_0, queue, size);
+            trainingGroups[i] = newTrainingSet;
+
+            i++;
+        }
+        return trainingGroups;
+    }
+
+    /**
      * Gets the leftover records from the given group.
      */
-    private Queue<Record> getLeftovers(Queue<Record> decisionSet, Queue<Record> testSet, int length, int dec) {
+    private Queue<Record> getLeftovers(Queue<Record> decisionSet, Queue<Record> testSet, int length) {
         Queue<Record> leftovers = new LinkedList<>();
-        
-        for(Record decRecord: decisionSet) {
-            if(leftovers.size() == length) { // Stop if the length needed is acquired
+
+        for (Record decRecord : decisionSet) {
+            if (leftovers.size() == length) { // Stop if the length needed is acquired
                 break;
             }
-            
+
             boolean unique = true;
-            
-            for(Record testRecord: testSet) {
-                if(decRecord.isEqualTo(testRecord)){ //Check if it's the same
+
+            for (Record testRecord : testSet) {
+                if (decRecord.isEqualTo(testRecord)) { //Check if it's the same
                     unique = false;                  //or if it has the right decision
                 }
             }
-            
-            if(unique) {
+
+            if (unique) {
                 Record record = new Record(decRecord);
                 leftovers.add(record);
             }
@@ -268,20 +304,20 @@ public class RandRecordSet {
      * Gets the sizes of the two queues and if one is larger than the other,
      * take the smaller of the two.
      */
-    private int getSizeDifference(Queue<Record> dec_0, Queue<Record> dec_1) {
-        Double value_1 = dec_0.size() - (dec_0.size() * 0.1);
-        Double value_2 = dec_1.size() - (dec_1.size() * 0.1);
+    private int getSizeDifference(Queue<Record> dec_0, Queue<Record> dec_1, double percent) {
+        Double value_1 = dec_0.size() - (dec_0.size() * percent);
+        Double value_2 = dec_1.size() - (dec_1.size() * percent);
         if (value_1 > value_2) {
             return value_2.intValue();
-        } else {
-            return value_1.intValue();
         }
+        return value_1.intValue();
+
     }
-    
-    public void printQue(Queue<Record> que, String name){
+
+    public void printQue(Queue<Record> que, String name) {
         String print = "";
-            
-        for (Record record: que) {
+
+        for (Record record : que) {
             if (record.getName() != null && record.getIntName() < 10) {
                 print += record.getName() + "\t"
                         + record.printRecord() + "\n";
@@ -289,12 +325,12 @@ public class RandRecordSet {
                 print += record.getName() + "\t " + record.printRecord() + "\n";
             }
         }
-        
+
         File output = new File(name + 1 + ".txt");
         try {
-            
+
             int i = 1;
-            while(output.exists()) {
+            while (output.exists()) {
                 output = new File(name + (i++) + ".txt");
             }
             output.createNewFile();

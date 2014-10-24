@@ -32,7 +32,7 @@ public class Matrix extends AbstractSetCreator {
     private int nullIndex;
 
     Matrix() {
-        this.recordSet = new Record[200];
+        this.recordSet = new Record[1000];
         this.nullIndex = 0;
         nullRecord = new Record(new double[]{-1});
         nullRecord.setName(-1);
