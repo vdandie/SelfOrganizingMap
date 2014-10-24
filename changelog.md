@@ -225,4 +225,9 @@
 		Matrix.Matrix() - increased size of recordSet (was 200, now 1000)
 		MatrixEnhanced.MatrixEnhanced() - increased size of regions/cf (was 190, now 1000)
 
+###2.0.04 	10/24/14
 
+	+ Summary:
+		Changed the doAlgorithm in Intersector so that min value holders are collected
+		then chosen in a different way. Also fixed the way results show. Added features
+		to Intersector so that it can also take in the k-1 case.
