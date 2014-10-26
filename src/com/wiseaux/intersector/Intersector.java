@@ -170,11 +170,11 @@ public class Intersector {
                     if (i == -1) {
                         //Do nothing
                     } else if (comp.get(i).rec.getDecision() == 0) {
-                        name = i;
                         dec0++;
                     } else {
                         dec1++;
                     }
+                    name = i;
                 }
 
                 if (dec0 > dec1) { //Take the dominant decision
