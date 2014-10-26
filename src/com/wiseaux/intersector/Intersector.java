@@ -113,7 +113,7 @@ public class Intersector {
 
     
     /**
-     * Runs the tests.
+     * Runs the tests for the k-1 case
      */
     public void run_2() {
         if (testSets.length < 1 || trainingSets.length < 1) {
@@ -201,12 +201,13 @@ public class Intersector {
                 for (int i : indexes) {
                     if (i == -1) {
                         //Do nothing
-                    } else if (comp.get(i).rec.getDecision() == 0) {
-                        name = i;
+                        continue;
+                    } else if (comp.get(i).rec.getDecision() == 0) {                  
                         dec0++;
                     } else {
                         dec1++;
                     }
+                    name = i;
                 }
 
                 if (dec0 > dec1) { //Take the dominant decision
