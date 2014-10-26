@@ -1,7 +1,10 @@
 package com.wiseaux.setCreator;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 /**
@@ -140,8 +143,11 @@ public class SetCreatorEnhanced extends SetCreator {
             }
             rSet.printQue(que, "trainingSets\\origTrainingSet");
             doAlgorithm(que, epochs, matrices[i]);
+            matrices[i].combineRegions();
             matrices[i].checkForDuplicates();
             matrices[i].addCertainties();
+            
+            //System.out.println(matrices[i].printRegion(matrices[i].getRegions()));
             matrices[i].printForRead();
         }
     }
@@ -162,6 +168,7 @@ public class SetCreatorEnhanced extends SetCreator {
             }
             //rSet.printQue(que, "trainingSets\\origTrainingSet");
             doAlgorithm(que, epochs, matrices[i]);
+            matrices[i].combineRegions();
             matrices[i].checkForDuplicates();
             matrices[i].addCertainties();
             matrices[i].printForRead();
@@ -184,6 +191,7 @@ public class SetCreatorEnhanced extends SetCreator {
             }
             rSet.printQue(que, "trainingSets\\origTrainingSet");
             doAlgorithm(que, epochs, matrices[i]);
+            matrices[i].combineRegions();
             matrices[i].checkForDuplicates();
             matrices[i].addCertainties();
             matrices[i].printForRead();
@@ -203,46 +211,55 @@ public class SetCreatorEnhanced extends SetCreator {
             System.out.print("Que is empty");
             System.exit(1);
         }
-
-        Queue<Record> d = new LinkedList<>(que);
+        
+        //Initialize newRegion
+        Map<Integer, HashSet<Record>> newRegion = new HashMap<>();
+        for (int i = 0; i < 1000; i++) {
+            newRegion.put(i, new HashSet<Record>());
+        }
+        
+        Queue<Record> inputQueue = new LinkedList<>(que);
         boolean[] removeFromQue = new boolean[que.size()];
         boolean recordRemoved = false;
 
         int recNum = 1;
-        //for each record in the queue
-        while (!d.isEmpty()) {
-            Record record = d.remove();
+        //for each inputRecord in the queue
+        while (!inputQueue.isEmpty()) {
+            Record inputRecord = inputQueue.remove();
             //Offset neighbors by 1 to include first epoch when record_1 becomes seed_1            
             boolean[] neighbors = new boolean[matrix.getSize() + 1];
 
-            //Used to count the amount of neighbors between the record and seeds
+            //Used to count the amount of neighbors between the inputRecord and seeds
             int count = 0;
 
             //Reason for <= : Check the 0th value as well
             for (int i = 0; i <= matrix.getSize(); i++) {
-                if (record.isNeighbor(matrix.getRecord(i), delta)) {
+                if (inputRecord.isNeighbor(matrix.getRecord(i), delta)) {
                     neighbors[i] = true;
                     count++;
                 }
             }
 
             if (count == 0) {   //No matches, add to matrix, add to winner, mark to remove
-                matrix.addRecord(record);
-                matrix.addWinner(record, record.getIntName());
+                matrix.addRecord(inputRecord);
+                matrix.addWinner(inputRecord, inputRecord.getIntName()); //Update newRegion
+                newRegion.get(inputRecord.getIntName()).add(inputRecord);
+                
                 removeFromQue[recNum - 1] = true;
                 recordRemoved = true;
-            } else if (count == 1) { //Find which record it matched, update
+            } else if (count == 1) { //Find which inputRecord it matched, update
                 int index = findTrue(neighbors);
                 int name = matrix.getRecord(index).getIntName();
-                matrix.updateMatrix(record, index, alpha, name);
-            } else if (count > 1) { //Find which record it matched and matched decision, update
+                matrix.updateMatrix(inputRecord, index, alpha, name); // Update newRegion
+                newRegion.get(name).add(inputRecord);
+            } else if (count > 1) { //Find which inputRecord it matched and matched decision, update
                 int name = -1;
                 int found = -1;
                 for (int index = 0; index < neighbors.length; index++) {
-                    if (neighbors[index] && matrix.getRecord(index).hasSameDecision(record)) {
+                    if (neighbors[index] && matrix.getRecord(index).hasSameDecision(inputRecord)) {
                         int max = Integer.MIN_VALUE;
-                        int temp = matrix.getClusterSize(index);
-
+                        //int temp = matrix.getClusterSize(index);
+                        int temp = newRegion.get(index).size();
                         if (max < temp) {
                             name = matrix.getRecord(index).getIntName();
                             found = index;
@@ -251,13 +268,19 @@ public class SetCreatorEnhanced extends SetCreator {
                 }
 
                 if (name != -1 && found != -1) {
-                    matrix.updateMatrix(record, found, alpha, name);
+                    matrix.updateMatrix(inputRecord, found, alpha, name);
+                    newRegion.get(name).add(inputRecord);
                 }
 
             }
             recNum++;
         }
-
+        
+        
+        //System.out.println("Epoch #" + epoch);
+        //System.out.println(matrix.printRegion(newRegion));
+        
+        matrix.addToRegions(newRegion);
         // If the epoch is at an interval of 10% of the original epoch
         // the update alpha
         if (epoch % (epoch * 0.1) == 0) {

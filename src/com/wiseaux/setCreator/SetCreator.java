@@ -200,7 +200,7 @@ public class SetCreator extends AbstractSetCreator {
                 write.write("Changed Records: \n");
                 write.write(matrix.printDecChange());
                 write.write("Clusters: \n");
-                write.write(matrix.printWinners());
+                write.write(matrix.printRegions());
                 write.close();
 
             } catch (FileNotFoundException e) {

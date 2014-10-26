@@ -32,7 +32,12 @@ public class Intersector {
      * Holds results for each of the runs.
      */
     ArrayList[] results;
-
+    
+    /**
+     * Holds the true/false pos/neg values throughout the tests.
+     */
+    Collective col;
+    
     /**
      * Holds the average results
      */
@@ -42,12 +47,24 @@ public class Intersector {
      * Number of files to go through.
      */
     protected int times;
+    
+    /**
+     * String formats.
+     */
+    String tableFormat = "%-10s | %-7s | %-7s |";
+    String line = "-------------------------------";
+    
+    /**
+     * Overall
+     */
+    String overall;
 
     public Intersector() {
         testSets = new Queue[11];
         trainingSets = new Queue[11];
         results = new ArrayList[11];
         averages = new ArrayList<>();
+        col = new Collective();
     }
 
     /**
@@ -114,6 +131,21 @@ public class Intersector {
             }
             runAlgorithm(i);
         }
+        
+        overall = "\n" + String.format(tableFormat, " ", "1", "0") + "\n" + line
+                + "\n" + String.format(tableFormat, "1", col.falsePos, col.falseNeg)
+                + "\n" + String.format(tableFormat, "0",  col.trueNeg, col.truePos)
+                + "\n" + line
+                + "\n" + String.format(tableFormat, " ",
+                        col.falsePos+ "/" + (col.trueNeg+col.falsePos),
+                        col.truePos+"/"+(col.falseNeg+col.truePos))
+                + "\n" + String.format(tableFormat, " ",
+                        String.format("%.2f",
+                                ((double)col.falsePos / ((double)col.trueNeg + col.falsePos))),
+                        String.format("%.2f", 
+                                ((double)col.truePos) / ((double)col.falseNeg + col.truePos)))
+                + "\n" + line
+        ;
     }
     
     /**
@@ -229,8 +261,6 @@ public class Intersector {
         }
 
         //True/False Pos/Neg table
-        String tableFormat = "%-10s | %-6s | %-6s |";
-        String line = "-------------------------------";
         result.add(String.format(tableFormat, " ", "1", "0") + "\n" + line
                 + "\n" + String.format(tableFormat, "1", falsePos, falseNeg)
                 + "\n" + String.format(tableFormat, "0",  trueNeg, truePos)
@@ -238,6 +268,12 @@ public class Intersector {
                 + "\n" + String.format(tableFormat, " ", falsePos+ "/" + (trueNeg+falsePos), truePos+"/"+(falseNeg+truePos))
                 + "\n" + line
         );
+        
+        // Collect all of true/false pos/neg information
+        col.falsePos += falsePos;
+        col.falseNeg += falseNeg;
+        col.truePos += truePos;
+        col.trueNeg += trueNeg;
 
         result.add("\nOverall Match percentage:  "
                 + String.format("%.2f", ((double) count / (double) outerCount) * 100)
@@ -361,7 +397,7 @@ public class Intersector {
     }
 
     
-        /**
+    /**
      * Reads the testSet file
      */
     private void readSpecialTestSetFile() {
@@ -536,6 +572,7 @@ public class Intersector {
             }
             write.write("\n\nTotal average match percentage: "
                     + String.format("%.2f", calcAvg() * 100) + "%");
+            write.write(overall);
             write.close();
 
         } catch (FileNotFoundException e) {
@@ -563,5 +600,14 @@ class Competitor {
         this.min = min;
         this.rec = rec;
         this.dec = rec.getDecision();
+    }
+}
+
+class Collective {
+    
+    int falsePos, falseNeg, truePos, trueNeg;
+    
+    Collective() {
+        falsePos = falseNeg = truePos = trueNeg = 0;
     }
 }

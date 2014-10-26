@@ -1,16 +1,23 @@
 package com.wiseaux.setCreator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
  * This class will handle storing the records of each winner into a HashMap as
- well as the decisions of the regions to calculate the certainty factor.
+ * well as the decisions of the regions to calculate the certainty factor.
  *
  * @author Daniel Swain
  */
 public class MatrixEnhanced extends Matrix {
+
+    /**
+     * Contains all regions for each epoch.
+     */
+    private final ArrayList<Map> totalRegions;
 
     /**
      * Each record that updates a seed kept in the matrix is then stored in this
@@ -38,13 +45,14 @@ public class MatrixEnhanced extends Matrix {
             this.regions.put(i, new HashSet<Record>());
             this.certaintyFactors.put(i, new HashSet<Record>());
         }
+        this.totalRegions = new ArrayList<>();
     }
 
     /**
      * Adds a the record to the identified index.
      */
     public void addWinner(Record record, int index) {
-        this.regions.get(index).add(record);
+        //this.regions.get(index).add(record);
         this.certaintyFactors.get(index).add(record);
     }
 
@@ -118,14 +126,13 @@ public class MatrixEnhanced extends Matrix {
     public int getClusterSize(int index) {
         return this.regions.get(index).size();
     }
-
+    
     /**
-     * Updates the updateMatrix class to also add the winner to the index.
+     * Updates the updateMatrix method to also add the winner to the index.
      */
     public void updateMatrix(Record record, int winnerIndex, double alpha, int name) {
         super.updateMatrix(record, winnerIndex, alpha);
         addWinner(record, name);
-
     }
 
     /**
@@ -175,34 +182,91 @@ public class MatrixEnhanced extends Matrix {
         this.certaintyFactors.get(first.getIntName())
                 .addAll(combineCertainties);
         this.certaintyFactors.get(second.getIntName()).clear();
-        
-        
+
     }
 
     /**
-     * To be called only after the certainty factors are set. Cleans the matrix of
- any records with 0/0 cover. Cleans the regions of any regions that aren't
- in the matrix.
+     * To be called only after the certainty factors are set. Cleans the matrix
+     * of any records with 0/0 cover. Cleans the regions of any regions that
+     * aren't in the matrix.
      */
     private void cleanMatrix() {
         for (int i = 0; i < getSize(); i++) {
-            if (this.certaintyFactors.get(recordSet[i].getIntName()).isEmpty() 
+            if (this.certaintyFactors.get(recordSet[i].getIntName()).isEmpty()
                     && this.regions.get(recordSet[i].getIntName()).isEmpty()) {
                 removeRecord(i);
                 i--;
             }
         }
-        
+
         for (int i = 0; i < this.regions.size(); i++) {
             HashSet<Record> list = this.regions.get(i);
 
             if (!list.isEmpty()) {
-                if(this.findRecord(i) < 0) {
+                if (this.findRecord(i) < 0) {
                     this.regions.get(i).clear();
                 }
             }
-         }
-        
+        }
+
+    }
+
+    /**
+     * Adds a region to the total regions array list.
+     */
+    public void addToRegions(Map<Integer, HashSet<Record>> region) {
+        this.totalRegions.add(region);
+    }
+
+    /**
+     * Returns a map of complete regions
+     */
+    public void combineRegions() {
+//        for(int i = 1; i <= 200; i++) {
+//            this.regions.put(i, null)
+//        }
+        for (Map<Integer, HashSet<Record>> aRegion : totalRegions) {
+            for (Map.Entry<Integer, HashSet<Record>> pairs : aRegion.entrySet()) {
+                this.regions.get(pairs.getKey()).addAll(pairs.getValue());
+            }
+            //this.regions.putAll(aRegion);
+            //System.out.println(printRegion(regions));
+        }
+    }
+    
+    public Map<Integer, HashSet<Record>> getRegions() {
+        return this.regions;
+    }
+    
+    /**
+     * Returns a string for a given cluster.
+     */
+    public String printRegion(Map<Integer, HashSet<Record>> region) {
+        String print = "";
+        String format = "%-14s";
+        String format_2 = "%-5s %-7s";
+
+        for (int i = 0; i < this.regions.size(); i++) {
+            HashSet<Record> list = this.regions.get(i);
+
+            if (!list.isEmpty()) {
+
+                print += "Rule " + (i) + " : ";
+
+                int count = 0;
+                for (Record record : list) {
+                    if (count++ % 5 == 0) {
+                        print += "\n";
+                    }
+                    print += String.format(format,
+                            String.format(format_2,
+                                    record.getName(),
+                                    "[D:" + record.getDecision() + "]" + " "));
+                }
+                print += "\n\n";
+            }
+        }
+        return print;
     }
 
     /**
@@ -249,29 +313,29 @@ public class MatrixEnhanced extends Matrix {
     public String printCombined() {
         String print = "\n";
         String line = "------------------------------";
-        
+
         for (Map.Entry<String, HashSet<String>> entry : combinedWeightVector.entrySet()) {
             if (entry.getValue().isEmpty()) {
 
             } else {
-                print += entry.getKey() + " has been combined with:\n"+line+"\n";
-                
+                print += entry.getKey() + " has been combined with:\n" + line + "\n";
+
                 int count = 0;
                 for (String name : entry.getValue()) {
-                    
-                    if(count % 5 == 0) {
+
+                    if (count % 5 == 0) {
                         print += "\n";
                     }
-                    
+
                     print += String.format("%-6s  ", name);
                     count++;
                 }
 
-                print += "\n\nTotal combined records: "+count+"\n\n\n";
+                print += "\n\nTotal combined records: " + count + "\n\n\n";
             }
         }
-        
-        if(print.length() < 5){
+
+        if (print.length() < 5) {
             print += "No records combined.";
         }
 
@@ -281,7 +345,7 @@ public class MatrixEnhanced extends Matrix {
     /**
      * Returns a string of the regions made for readability.
      */
-    public String printWinners() {
+    public String printRegions() {
         String print = "\n";
         String format = "%-14s";
         String format_2 = "%-4s %-7s";
