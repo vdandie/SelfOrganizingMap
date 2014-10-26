@@ -103,7 +103,6 @@ public class SetCreatorEnhanced extends SetCreator {
     public void train(int numOfSets) {
         new File("trainingSets").mkdir();
         shootRecords(trainingSet, numOfSets, matrices);
-        this.outputToFile(matrices, "trainingSets\\trainingSetWithData");
     }
 
     /**
@@ -123,8 +122,7 @@ public class SetCreatorEnhanced extends SetCreator {
      */
     public void trainAllButOneRecord() {
         new File("trainingSets").mkdir();
-        shootRecords_3(trainingSet, trainingSet.length/2, matrices);
-        this.outputToFile(matrices, "trainingSets\\trainingSetWithData");
+        shootRecords_3(trainingSet, trainingSet.length/2);
     }
     
     /**
@@ -134,7 +132,7 @@ public class SetCreatorEnhanced extends SetCreator {
         for (int i = 0; i < numOfSets; i++) {
             Queue<Record> que = rSet.createQueue(records, i, records.length);
 
-            matrices[i] = new MatrixEnhanced();
+            MatrixEnhanced matrix = new MatrixEnhanced();
             resetAlpha();
 
             if (que.isEmpty()) {
@@ -142,18 +140,18 @@ public class SetCreatorEnhanced extends SetCreator {
                 System.exit(1);
             }
             rSet.printQue(que, "trainingSets\\origTrainingSet");
-            doAlgorithm(que, epochs, matrices[i]);
-            matrices[i].combineRegions();
-            matrices[i].checkForDuplicates();
-            matrices[i].addCertainties();
-            
-            //System.out.println(matrices[i].printRegion(matrices[i].getRegions()));
-            matrices[i].printForRead();
+            doAlgorithm(que, epochs, matrix);
+            matrix.combineRegions();
+            matrix.checkForDuplicates();
+            matrix.addCertainties();
+            matrix.printForRead();
+            this.outputToFile(matrix, "trainingSets\\trainingSetWithData");
         }
     }
 
     /**
-     * Creates a queue to send to doAlgorithm using the given queue array
+     * Creates a queue to send to doAlgorithm using the given queue array;
+     * for pre-created trainingSets
      */
     private void shootRecords_2(Queue[] records, int numOfSets, MatrixEnhanced[] matrices) {
         for (int i = 0; i < numOfSets; i++) {
@@ -178,11 +176,11 @@ public class SetCreatorEnhanced extends SetCreator {
     /**
      * Creates a queue to send to doAlgorithm using the given queue array
      */
-    private void shootRecords_3(Queue[] records, int numOfSets, MatrixEnhanced[] matrices) {
+    private void shootRecords_3(Queue[] records, int numOfSets) {
          for (int i = 0; i < numOfSets; i++) {
             Queue<Record> que = rSet.createQueue(records, i, records.length);
 
-            matrices[i] = new MatrixEnhanced();
+            MatrixEnhanced matrix = new MatrixEnhanced();
             resetAlpha();
 
             if (que.isEmpty()) {
@@ -190,11 +188,12 @@ public class SetCreatorEnhanced extends SetCreator {
                 System.exit(1);
             }
             rSet.printQue(que, "trainingSets\\origTrainingSet");
-            doAlgorithm(que, epochs, matrices[i]);
-            matrices[i].combineRegions();
-            matrices[i].checkForDuplicates();
-            matrices[i].addCertainties();
-            matrices[i].printForRead();
+            doAlgorithm(que, epochs, matrix);
+            matrix.combineRegions();
+            matrix.checkForDuplicates();
+            matrix.addCertainties();
+            matrix.printForRead();
+            this.outputToFile(matrix, "trainingSets\\trainingSetWithData");
         }
     }
 

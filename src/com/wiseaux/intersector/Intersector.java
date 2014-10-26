@@ -109,6 +109,21 @@ public class Intersector {
             }
             runAlgorithm(i);
         }
+        
+        overall = "\n" + String.format(tableFormat, " ", "1", "0") + "\n" + line
+                + "\n" + String.format(tableFormat, "1", col.falsePos, col.falseNeg)
+                + "\n" + String.format(tableFormat, "0",  col.trueNeg, col.truePos)
+                + "\n" + line
+                + "\n" + String.format(tableFormat, " ",
+                        col.falsePos+ "/" + (col.trueNeg+col.falsePos),
+                        col.truePos+"/"+(col.falseNeg+col.truePos))
+                + "\n" + String.format(tableFormat, " ",
+                        String.format("%.2f",
+                                ((double)col.falsePos / ((double)col.trueNeg + col.falsePos))),
+                        String.format("%.2f", 
+                                ((double)col.truePos) / ((double)col.falseNeg + col.truePos)))
+                + "\n" + line
+        ;
     }
 
     
@@ -527,6 +542,7 @@ public class Intersector {
             }
             write.write("\n\nTotal average match percentage: "
                     + String.format("%.2f", calcAvg() * 100) + "%");
+            write.write(overall);
             write.close();
 
         } catch (FileNotFoundException e) {

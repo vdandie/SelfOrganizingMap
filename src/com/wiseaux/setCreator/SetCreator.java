@@ -94,8 +94,6 @@ public class SetCreator extends AbstractSetCreator {
             System.exit(1);
         }
     }
-    
-    
 
     /**
      * Initializes the AllRecords[] array with the given parameters.
@@ -107,17 +105,17 @@ public class SetCreator extends AbstractSetCreator {
         }
         //this.testSet = new RandRecordSet().getDecisionGroupsForTestSet(allRecords, 0, 1);
     }
-    
+
     /**
      * Fills the trainingSet with the pre-created trainingSets.
      */
-    public void fillTrainingSet(){
-        for(int i = 0; i < 10; i++) {
+    public void fillTrainingSet() {
+        for (int i = 0; i < 10; i++) {
             readOrigTrainingSetFile(i + 1);
         }
     }
-    
-     /**
+
+    /**
      * Reads the testSet file
      */
     private void readOrigTrainingSetFile(int index) {
@@ -175,7 +173,7 @@ public class SetCreator extends AbstractSetCreator {
         File output = new File(name + 1 + ".txt");
 
         for (MatrixEnhanced matrix : matrices) {
-            if(matrix == null) {
+            if (matrix == null) {
                 break;
             }
             try {
@@ -209,7 +207,46 @@ public class SetCreator extends AbstractSetCreator {
             }
         }
     }
-    
+
+    public void outputToFile(MatrixEnhanced matrix, String name) {
+
+        File output = new File(name + 1 + ".txt");
+
+        if (matrix == null) {
+            return;
+        }
+        try {
+            int i = 1;
+            while (output.exists()) {
+                output = new File(name + i++ + ".txt");
+            }
+            output.createNewFile();
+
+        } catch (IOException ex) {
+            System.out.print("Can't find directory");
+            System.exit(1);
+        }
+
+        try (PrintWriter write = new PrintWriter(output)) {
+
+            write.flush();
+            write.write("WeightVectorMatrix:\n");
+            write.write(matrix.printMatrix());
+            write.write("Combined Records: \n");
+            write.write(matrix.printCombined());
+            write.write("Changed Records: \n");
+            write.write(matrix.printDecChange());
+            write.write("Clusters: \n");
+            write.write(matrix.printRegions());
+            write.close();
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Output file not found.");
+            System.exit(1);
+        }
+
+    }
+
     /**
      * Updates the alpha by multiplying it with the beta
      */
