@@ -242,7 +242,7 @@ public class SetCreatorEnhanced extends SetCreator {
                 matrix.updateMatrix(record, index, alpha, name);
             } else if (count > 1) { //Find which record it matched and matched decision, update
                 int matchMax = Integer.MIN_VALUE;
-                int nonMatchMax = Integer.MIN_VALUE;
+                int nonMatchMax = Integer.MAX_VALUE;
                 Map<Integer, Record> competitors = new HashMap<>();
                 for (int index = 0; index < neighbors.length; index++) {
                     if (neighbors[index] 
@@ -260,7 +260,7 @@ public class SetCreatorEnhanced extends SetCreator {
                             && (matchMax == Integer.MIN_VALUE)) {
                         
                         int temp = matrix.getClusterSize(index);
-                        if (nonMatchMax < temp) {
+                        if (nonMatchMax > temp) {
                             competitors.clear();
                             competitors.put(index, matrix.getRecord(index));
                         } else if (nonMatchMax == temp) {

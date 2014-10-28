@@ -3,6 +3,7 @@ package com.wiseaux.setCreator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class will handle storing the records of each winner into a HashMap as
@@ -46,6 +47,30 @@ public class MatrixEnhanced extends Matrix {
     public void addWinner(Record record, int index) {
         this.regions.get(index).add(record);
         this.certaintyFactors.get(index).add(record);
+    }
+    
+    /**
+     * checks the dominant decision of the rule's region.
+     */
+    public void checkDominant(int index) {
+        Set<Record> region = regions.get(index);
+        int dec0, dec1;
+        dec0 = dec1 = 0;
+        for(Record rule: region) {
+            if(rule.getDecision() == 0) {
+                dec0++;
+            } else {
+                dec1++;
+            }
+        }
+        
+        if(dec0 > dec1) {
+            this.recordSet[index].setDecision(0);
+            this.recordSet[index].decisionChanged = true;
+        } else if(dec1 > dec0) {
+            this.recordSet[index].setDecision(1);
+            this.recordSet[index].decisionChanged = true;
+        }
     }
 
     /**
