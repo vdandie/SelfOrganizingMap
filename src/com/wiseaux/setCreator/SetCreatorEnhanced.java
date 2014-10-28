@@ -1,8 +1,13 @@
 package com.wiseaux.setCreator;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Queue;
+import java.util.Random;
 
 /**
  * This class is responsible for sending records into the given matrix
@@ -236,22 +241,42 @@ public class SetCreatorEnhanced extends SetCreator {
                 int name = matrix.getRecord(index).getIntName();
                 matrix.updateMatrix(record, index, alpha, name);
             } else if (count > 1) { //Find which record it matched and matched decision, update
-                int name = -1;
-                int found = -1;
+                int matchMax = Integer.MIN_VALUE;
+                int nonMatchMax = Integer.MIN_VALUE;
+                Map<Integer, Record> competitors = new HashMap<>();
                 for (int index = 0; index < neighbors.length; index++) {
-                    if (neighbors[index] && matrix.getRecord(index).hasSameDecision(record)) {
-                        int max = Integer.MIN_VALUE;
+                    if (neighbors[index] 
+                            && matrix.getRecord(index).hasSameDecision(record)) {
+                        
                         int temp = matrix.getClusterSize(index);
-
-                        if (max < temp) {
-                            name = matrix.getRecord(index).getIntName();
-                            found = index;
+                        if (matchMax < temp) {
+                            competitors.clear();
+                            competitors.put(index, matrix.getRecord(index));
+                        } else if (matchMax == temp) {
+                            competitors.put(index, matrix.getRecord(index));
+                        }
+                    } else if(neighbors[index] 
+                            && !(matrix.getRecord(index).hasSameDecision(record)) 
+                            && (matchMax == Integer.MIN_VALUE)) {
+                        
+                        int temp = matrix.getClusterSize(index);
+                        if (nonMatchMax < temp) {
+                            competitors.clear();
+                            competitors.put(index, matrix.getRecord(index));
+                        } else if (nonMatchMax == temp) {
+                            competitors.put(index, matrix.getRecord(index));
                         }
                     }
                 }
-
-                if (name != -1 && found != -1) {
-                    matrix.updateMatrix(record, found, alpha, name);
+                
+                if(!competitors.isEmpty()) {
+                    Random random = new Random();
+                    List<Integer> keys = new ArrayList<>(competitors.keySet());
+                    int randomKey = keys.get(random.nextInt(keys.size()));
+                    Record winner = competitors.get(randomKey);
+                    int name = winner.getIntName();
+                    // Update
+                    matrix.updateMatrix(record, randomKey, alpha, name);
                 }
 
             }
