@@ -240,6 +240,9 @@ public class SetCreatorEnhanced extends SetCreator {
                 int index = findTrue(neighbors);
                 int name = matrix.getRecord(index).getIntName();
                 matrix.updateMatrix(record, index, alpha, name);
+                
+                matrix.checkDominant(index);
+                
             } else if (count > 1) { //Find which record it matched and matched decision, update
                 int matchMax = Integer.MIN_VALUE;
                 int nonMatchMax = Integer.MAX_VALUE;
@@ -277,6 +280,9 @@ public class SetCreatorEnhanced extends SetCreator {
                     int name = winner.getIntName();
                     // Update
                     matrix.updateMatrix(record, randomKey, alpha, name);
+                    
+                    matrix.checkDominant(randomKey);
+                    
                 }
 
             }
