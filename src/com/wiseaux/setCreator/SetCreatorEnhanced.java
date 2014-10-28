@@ -1,11 +1,14 @@
 package com.wiseaux.setCreator;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Random;
 
 /**
  * This class is responsible for sending records into the given matrix
@@ -52,7 +55,7 @@ public class SetCreatorEnhanced extends SetCreator {
     /**
      * Reads the configuration and trains k-1 records
      */
-    public void runForSpecialSet(){
+    public void runForSpecialSet() {
         readConfig();
         initializeAllRecords(numOfRecords, numOfAttributes);
         readRecords();
@@ -86,7 +89,7 @@ public class SetCreatorEnhanced extends SetCreator {
     public void specialTestSetsToFiles() {
         Queue<Record> tmp = new LinkedList<>();
         
-        for(Queue<Record> test : testSet) {
+        for (Queue<Record> test : testSet) {
             tmp.addAll(test);
         }
         rSet.setNamesForRecords(tmp);
@@ -122,7 +125,7 @@ public class SetCreatorEnhanced extends SetCreator {
      */
     public void trainAllButOneRecord() {
         new File("trainingSets").mkdir();
-        shootRecords_3(trainingSet, trainingSet.length/2);
+        shootRecords_3(trainingSet, trainingSet.length / 2);
     }
     
     /**
@@ -150,8 +153,8 @@ public class SetCreatorEnhanced extends SetCreator {
     }
 
     /**
-     * Creates a queue to send to doAlgorithm using the given queue array;
-     * for pre-created trainingSets
+     * Creates a queue to send to doAlgorithm using the given queue array; for
+     * pre-created trainingSets
      */
     private void shootRecords_2(Queue[] records, int numOfSets, MatrixEnhanced[] matrices) {
         for (int i = 0; i < numOfSets; i++) {
@@ -252,32 +255,33 @@ public class SetCreatorEnhanced extends SetCreator {
                 matrix.updateMatrix(inputRecord, index, alpha, name); // Update newRegion
                 newRegion.get(name).add(inputRecord);
             } else if (count > 1) { //Find which inputRecord it matched and matched decision, update
-                int name = -1;
-                int found = -1;
+                int max = Integer.MIN_VALUE;
+                Map<Integer, Record> competitors = new HashMap<>();
                 for (int index = 0; index < neighbors.length; index++) {
                     if (neighbors[index] && matrix.getRecord(index).hasSameDecision(inputRecord)) {
-                        int max = Integer.MIN_VALUE;
-                        //int temp = matrix.getClusterSize(index);
                         int temp = newRegion.get(index).size();
                         if (max < temp) {
-                            name = matrix.getRecord(index).getIntName();
-                            found = index;
+                            competitors.clear();
+                            competitors.put(index, matrix.getRecord(index));
+                        } else if (max == temp) {
+                            competitors.put(index, matrix.getRecord(index));
                         }
                     }
                 }
-
-                if (name != -1 && found != -1) {
-                    matrix.updateMatrix(inputRecord, found, alpha, name);
+                
+                if(!competitors.isEmpty()) {
+                    Random random = new Random();
+                    List<Integer> keys = new ArrayList<>(competitors.keySet());
+                    int randomKey = keys.get(random.nextInt(keys.size()));
+                    Record winner = competitors.get(randomKey);
+                    int name = winner.getIntName();
+                    // Update
+                    matrix.updateMatrix(inputRecord, randomKey, alpha, name);
                     newRegion.get(name).add(inputRecord);
                 }
-
             }
             recNum++;
         }
-        
-        
-        //System.out.println("Epoch #" + epoch);
-        //System.out.println(matrix.printRegion(newRegion));
         
         matrix.addToRegions(newRegion);
         // If the epoch is at an interval of 10% of the original epoch

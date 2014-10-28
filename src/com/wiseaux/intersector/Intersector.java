@@ -281,7 +281,9 @@ public class Intersector {
                 + "\n" + String.format(tableFormat, "1", falsePos, falseNeg)
                 + "\n" + String.format(tableFormat, "0",  trueNeg, truePos)
                 + "\n" + line
-                + "\n" + String.format(tableFormat, " ", falsePos+ "/" + (trueNeg+falsePos), truePos+"/"+(falseNeg+truePos))
+                + "\n" + String.format(tableFormat, " ",
+                        falsePos +  "/" + (trueNeg+falsePos),
+                        truePos  +  "/" + (falseNeg+truePos))
                 + "\n" + line
         );
         
