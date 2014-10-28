@@ -19,6 +19,7 @@ testSets
 trainingSets
 results
 build
+TestSOM.java
 .class
 
 # =========================
