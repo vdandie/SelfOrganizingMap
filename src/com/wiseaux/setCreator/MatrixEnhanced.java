@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class will handle storing the records of each winner into a HashMap as
@@ -53,6 +54,29 @@ public class MatrixEnhanced extends Matrix {
     public void addWinner(Record record, int index) {
         //this.regions.get(index).add(record);
         this.certaintyFactors.get(index).add(record);
+    }
+    /**
+     * Checks the region for the dominant decision.
+     */
+    public void checkDominant(int index, HashSet<Record> region) {
+        
+        int dec0, dec1;
+        dec0 = dec1 = 0;
+        for(Record rule: region) {
+            if(rule.getDecision() == 0) {
+                dec0++;
+            } else {
+                dec1++;
+            }
+        }
+        
+        if(dec0 > dec1) {
+            this.recordSet[index].setDecision(0);
+            this.recordSet[index].decisionChanged = true;
+        } else if(dec1 > dec0) {
+            this.recordSet[index].setDecision(1);
+            this.recordSet[index].decisionChanged = true;
+        }
     }
 
     /**

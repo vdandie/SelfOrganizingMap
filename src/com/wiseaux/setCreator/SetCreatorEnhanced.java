@@ -273,6 +273,7 @@ public class SetCreatorEnhanced extends SetCreator {
                 int name = matrix.getRecord(index).getIntName();
                 matrix.updateMatrix(inputRecord, index, alpha, name); // Update newRegion
                 newRegion.get(name).add(inputRecord);
+                matrix.checkDominant(index, newRegion.get(name));
             } else if (count > 1) { //Find which inputRecord it matched and matched decision, update
 
                 //debug.add("\n\nCase 3\nCount : " + count);
@@ -280,7 +281,7 @@ public class SetCreatorEnhanced extends SetCreator {
                 int matches = 0;//Debug
 
                 int matchMax = Integer.MIN_VALUE;
-                int nonMatchMax = Integer.MIN_VALUE;
+                int nonMatchMax = Integer.MAX_VALUE;
                 Map<Integer, Record> competitors = new HashMap<>();
                 for (int index = 0; index < neighbors.length; index++) {
                     if (neighbors[index]
@@ -302,7 +303,7 @@ public class SetCreatorEnhanced extends SetCreator {
                         nonMatches++;//Debug
 
                         int temp = newRegion.get(index).size();
-                        if (nonMatchMax < temp) {
+                        if (nonMatchMax > temp) {
                             competitors.clear();
                             competitors.put(index, matrix.getRecord(index));
                         } else if (nonMatchMax == temp) {
@@ -329,6 +330,9 @@ public class SetCreatorEnhanced extends SetCreator {
                     // Update
                     matrix.updateMatrix(inputRecord, randomKey, alpha, name);
                     newRegion.get(name).add(inputRecord);
+                    
+                    matrix.checkDominant(randomKey, newRegion.get(name));
+                    
                 }
             }
             recNum++;
