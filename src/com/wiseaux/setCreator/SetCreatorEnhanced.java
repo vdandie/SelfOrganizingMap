@@ -209,7 +209,7 @@ public class SetCreatorEnhanced extends SetCreator {
      */
     private void doAlgorithm(Queue<Record> que, int epochCount, MatrixEnhanced matrix) {
         int epoch = epochCount;
-        if (que.isEmpty() && 1 == 0) {
+        if (que.isEmpty()) {
             System.out.print("Que is empty");
             System.exit(1);
         }
@@ -255,15 +255,29 @@ public class SetCreatorEnhanced extends SetCreator {
                 matrix.updateMatrix(inputRecord, index, alpha, name); // Update newRegion
                 newRegion.get(name).add(inputRecord);
             } else if (count > 1) { //Find which inputRecord it matched and matched decision, update
-                int max = Integer.MIN_VALUE;
+                int matchMax = Integer.MIN_VALUE;
+                int nonMatchMax = Integer.MIN_VALUE;
                 Map<Integer, Record> competitors = new HashMap<>();
                 for (int index = 0; index < neighbors.length; index++) {
-                    if (neighbors[index] && matrix.getRecord(index).hasSameDecision(inputRecord)) {
+                    if (neighbors[index] 
+                            && matrix.getRecord(index).hasSameDecision(inputRecord)) {
+                        
                         int temp = newRegion.get(index).size();
-                        if (max < temp) {
+                        if (matchMax < temp) {
                             competitors.clear();
                             competitors.put(index, matrix.getRecord(index));
-                        } else if (max == temp) {
+                        } else if (matchMax == temp) {
+                            competitors.put(index, matrix.getRecord(index));
+                        }
+                    } else if(neighbors[index] 
+                            && !(matrix.getRecord(index).hasSameDecision(inputRecord)) 
+                            && (matchMax == Integer.MIN_VALUE)) {
+                        
+                        int temp = newRegion.get(index).size();
+                        if (nonMatchMax < temp) {
+                            competitors.clear();
+                            competitors.put(index, matrix.getRecord(index));
+                        } else if (nonMatchMax == temp) {
                             competitors.put(index, matrix.getRecord(index));
                         }
                     }
