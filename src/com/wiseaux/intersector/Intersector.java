@@ -111,18 +111,19 @@ public class Intersector {
         }
         
         overall = "\n" + String.format(tableFormat, " ", "1", "0") + "\n" + line
-                + "\n" + String.format(tableFormat, "1", col.falsePos, col.falseNeg)
-                + "\n" + String.format(tableFormat, "0",  col.trueNeg, col.truePos)
+                + "\n" + String.format(tableFormat, "1", col.truePos, col.falsePos)
+                + "\n" + String.format(tableFormat, "0",  col.falseNeg, col.trueNeg)
                 + "\n" + line
                 + "\n" + String.format(tableFormat, " ",
-                        col.falsePos+ "/" + (col.trueNeg+col.falsePos),
-                        col.truePos+"/"+(col.falseNeg+col.truePos))
+                        col.truePos+ "/" + (col.falseNeg+col.truePos),
+                        col.trueNeg+"/"+(col.trueNeg+col.falsePos))
                 + "\n" + String.format(tableFormat, " ",
                         String.format("%.2f",
-                                ((double)col.falsePos / ((double)col.trueNeg + col.falsePos))),
+                                ((double)col.truePos / ((double)col.falseNeg + col.truePos))),
                         String.format("%.2f", 
-                                ((double)col.truePos) / ((double)col.falseNeg + col.truePos)))
+                                ((double)col.trueNeg) / ((double)col.trueNeg + col.falsePos)))
                 + "\n" + line
+                + "\n" + "Total Not Predictable : " + col.notPredictable
         ;
     }
 
@@ -148,18 +149,19 @@ public class Intersector {
         }
         
         overall = "\n" + String.format(tableFormat, " ", "1", "0") + "\n" + line
-                + "\n" + String.format(tableFormat, "1", col.falsePos, col.falseNeg)
-                + "\n" + String.format(tableFormat, "0",  col.trueNeg, col.truePos)
+                + "\n" + String.format(tableFormat, "1", col.truePos, col.falsePos)
+                + "\n" + String.format(tableFormat, "0",  col.falseNeg, col.trueNeg)
                 + "\n" + line
                 + "\n" + String.format(tableFormat, " ",
-                        col.falsePos+ "/" + (col.trueNeg+col.falsePos),
-                        col.truePos+"/"+(col.falseNeg+col.truePos))
+                        col.truePos+ "/" + (col.falseNeg+col.truePos),
+                        col.trueNeg+"/"+(col.trueNeg+col.falsePos))
                 + "\n" + String.format(tableFormat, " ",
                         String.format("%.2f",
-                                ((double)col.falsePos / ((double)col.trueNeg + col.falsePos))),
+                                ((double)col.truePos / ((double)col.falseNeg + col.truePos))),
                         String.format("%.2f", 
-                                ((double)col.truePos) / ((double)col.falseNeg + col.truePos)))
+                                ((double)col.trueNeg) / ((double)col.trueNeg + col.falsePos)))
                 + "\n" + line
+                + "\n" + "Total Not Predictable : " + col.notPredictable
         ;
     }
     
@@ -176,81 +178,62 @@ public class Intersector {
 
         int count = 0, outerCount = 0;
         double temp;
-        ArrayList<Competitor> comp = new ArrayList<>();
+        
         for (Record test : testQueue) {
+            
             double min = Double.MAX_VALUE;
-            int name = 0;
-            boolean match = false;
-
+            boolean match;
+            
+            ArrayList<Competitor> comp = new ArrayList<>();
             for (Record rule : trainingQueue) { //For each test, send it against every rule
                 //and get the sumAbsDif. 
                 temp = sumAbsDif(test, rule);
                 if (temp < min) {
                     min = temp;
-                    name =  rule.getIntName();
+                    comp.clear(); //New minimum found, remove all
+                    
                     match = test.hasSameDecision(rule);
-                    comp.add(new Competitor(min,rule));
-                }
-            }
-            
-            //Initialize indexes
-            int[] indexes = new int[comp.size()];
-            for (int i = 0; i < indexes.length; i++) {
-                indexes[i] = -1;
-            }
-            
-            //Count the records with the same min
-            int minCounter = 0;
-            for (int i = 0; i < comp.size(); i++) {
-                if (comp.get(i).min == min) {
-                    minCounter++;
-                    indexes[i] = i;
-                } else {
-                    indexes[i] = -1;
+                    comp.add(new Competitor(min,rule, match));
+                } else if(temp == min) {
+                    match = test.hasSameDecision(rule);
+                    comp.add(new Competitor(min,rule, match));
                 }
             }
             
             boolean predictable = true;
-            if (minCounter > 1) {
+            if (comp.size() > 1) {
                 int dec0 = 0, dec1 = 0;
-                for (int i : indexes) {
-                    if (i == -1) {
-                        //Do nothing
-                        continue;
-                    } else if (comp.get(i).rec.getDecision() == 0) {                  
+                for(Competitor dec : comp) {
+                    if(dec.dec == 0) {
                         dec0++;
                     } else {
                         dec1++;
                     }
-                    name = i;
                 }
-
+                
                 if (dec0 > dec1) { //Take the dominant decision
-                    name = comp.get(name).rec.getIntName();
-                    match = test.getDecision() == 0;
-                    comp.get(comp.size() - 1 ).dec = 0;
+                    comp.get(0).dec = 0;
+                    comp.get(0).match = comp.get(0).dec == test.getDecision();
                 } else if (dec0 < dec1) {
-                    name = comp.get(name).rec.getIntName();
-                    match = test.getDecision() == 1;
-                    comp.get(comp.size() - 1 ).dec = 1;
-                } else if (dec0 == dec1) {
+                    comp.get(0).dec = 1;
+                    comp.get(0).match = comp.get(0).dec == test.getDecision();
+                } else if (dec0 == dec1) { //If no dominant decision, not predictable
                     predictable = false;
                 }
-
             } 
             
-            if (match && predictable) { // Matched and predictable
+            if (comp.get(0).match && predictable) { // Matched and predictable
                 count++;
                 outerCount++;
-                if (test.getDecision() == 0) {
+                if (test.getDecision() == 1) {
                     truePos += 1;
                 } else {
-                    falsePos += 1;
+                    trueNeg += 1;
                 }
             } else if (predictable) { // Not matched, yet predictable
                 outerCount++;
-                if (test.getDecision() == 1) {
-                    trueNeg += 1;
+                if (test.getDecision() == 0) {
+                    falsePos += 1;
                 } else {
                     falseNeg += 1;
                 }
@@ -260,11 +243,11 @@ public class Intersector {
                 result.add(String.format("Test Record : %-6s | Min Value: %-3s "
                         + "| Rule : %-5s | Match: %-5s | Test %-6s",
                         String.format("%-5s", test.getName()),
-                        String.format("%.2f", min),
-                        String.format("R:%2s", name),
-                        String.format("%s", match),
-                        String.format("D: %.0f", test.getDecision()))
-                        + " : " + comp.get(comp.size()-1).rec.getDecision()
+                        String.format("%.2f", comp.get(0).min),
+                        String.format("R:%2s", comp.get(0).rec.getIntName()),
+                        String.format("%s", comp.get(0).match),
+                        String.format("TD: %.0f", test.getDecision()))
+                        + "RD : " + comp.get(0).dec
                         + "\n"
                 );
             } else {
@@ -278,12 +261,12 @@ public class Intersector {
 
         //True/False Pos/Neg table
         result.add(String.format(tableFormat, " ", "1", "0") + "\n" + line
-                + "\n" + String.format(tableFormat, "1", falsePos, falseNeg)
-                + "\n" + String.format(tableFormat, "0",  trueNeg, truePos)
+                + "\n" + String.format(tableFormat, "1", truePos, falsePos)
+                + "\n" + String.format(tableFormat, "0", falseNeg, trueNeg)
                 + "\n" + line
                 + "\n" + String.format(tableFormat, " ",
-                        falsePos +  "/" + (trueNeg+falsePos),
-                        truePos  +  "/" + (falseNeg+truePos))
+                        truePos +  "/" + (truePos+falseNeg),
+                        trueNeg +  "/" + (trueNeg+falsePos))
                 + "\n" + line
         );
         
@@ -292,6 +275,7 @@ public class Intersector {
         col.falseNeg += falseNeg;
         col.truePos += truePos;
         col.trueNeg += trueNeg;
+        col.notPredictable += notPred;
 
         result.add("\nOverall Match percentage:  "
                 + String.format("%.2f", ((double) count / (double) outerCount) * 100)
@@ -610,23 +594,25 @@ class Competitor {
     double min;
     Record rec;
     double dec;
+    boolean match;
 
     Competitor() {
 
     }
 
-    Competitor(double min, Record rec) {
+    Competitor(double min, Record rec, boolean match) {
         this.min = min;
         this.rec = rec;
         this.dec = rec.getDecision();
+        this.match = match;
     }
 }
 
 class Collective {
     
-    int falsePos, falseNeg, truePos, trueNeg;
+    int falsePos, falseNeg, truePos, trueNeg, notPredictable;
     
     Collective() {
-        falsePos = falseNeg = truePos = trueNeg = 0;
+        falsePos = falseNeg = truePos = trueNeg = notPredictable = 0;
     }
 }

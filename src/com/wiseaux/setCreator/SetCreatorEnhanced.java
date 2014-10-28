@@ -1,6 +1,9 @@
 package com.wiseaux.setCreator;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +23,12 @@ import java.util.Random;
 public class SetCreatorEnhanced extends SetCreator {
 
     /**
+     * Debugging strings.
+     */
+    ArrayList<String> debug = new ArrayList<>();
+    String table = "%-10s|%-10s|%-10s|%-10s\n";
+    String line = "----------|----------|----------|----------\n";
+    /**
      * Handle creation of the sets
      */
     private RandRecordSet rSet;
@@ -36,6 +45,9 @@ public class SetCreatorEnhanced extends SetCreator {
         readConfig();
         initializeAllRecords(numOfRecords, numOfAttributes);
         readRecords();
+
+        initDebug();//Debug
+
         rSet = new RandRecordSet(allRecords);
         testSet = rSet.createTestSet(allRecords, 0, 1);
         trainingSet = rSet.createTrainingSet(testSet, 0.1); // using 90%
@@ -51,7 +63,7 @@ public class SetCreatorEnhanced extends SetCreator {
         readConfig();
         rSet = new RandRecordSet();
     }
-    
+
     /**
      * Reads the configuration and trains k-1 records
      */
@@ -63,7 +75,7 @@ public class SetCreatorEnhanced extends SetCreator {
         testSet = rSet.createSpecialTestSet(allRecords, 0, 1);
         trainingSet = rSet.createSpecialTrainingSet(testSet, 0.01); // using 99%
         matrices = new MatrixEnhanced[trainingSet.length];
-        
+
         specialTestSetsToFiles();
     }
 
@@ -82,22 +94,22 @@ public class SetCreatorEnhanced extends SetCreator {
             rSet.printQue(testSet[i], "testSets\\testSet");
         }
     }
-    
+
     /**
      * Puts the specialTestSets into files
      */
     public void specialTestSetsToFiles() {
         Queue<Record> tmp = new LinkedList<>();
-        
+
         for (Queue<Record> test : testSet) {
             tmp.addAll(test);
         }
         rSet.setNamesForRecords(tmp);
-        
+
         new File("testSets").mkdir();
 
         rSet.printQue(tmp, "testSets\\specialTestSet");
-        
+
     }
 
     /**
@@ -106,6 +118,9 @@ public class SetCreatorEnhanced extends SetCreator {
     public void train(int numOfSets) {
         new File("trainingSets").mkdir();
         shootRecords(trainingSet, numOfSets, matrices);
+
+        debuggingFile();
+
     }
 
     /**
@@ -119,7 +134,7 @@ public class SetCreatorEnhanced extends SetCreator {
         shootRecords_2(trainingSet, trainingSet.length, matrices);
         this.outputToFile(matrices, "trainingSets\\trainingSetWithData");
     }
-    
+
     /**
      * Access shootRecords() using a set of k-1 records
      */
@@ -127,7 +142,7 @@ public class SetCreatorEnhanced extends SetCreator {
         new File("trainingSets").mkdir();
         shootRecords_3(trainingSet, trainingSet.length / 2);
     }
-    
+
     /**
      * Creates a queue to send to doAlgorithm using the given queue array
      */
@@ -175,12 +190,12 @@ public class SetCreatorEnhanced extends SetCreator {
             matrices[i].printForRead();
         }
     }
-    
+
     /**
      * Creates a queue to send to doAlgorithm using the given queue array
      */
     private void shootRecords_3(Queue[] records, int numOfSets) {
-         for (int i = 0; i < numOfSets; i++) {
+        for (int i = 0; i < numOfSets; i++) {
             Queue<Record> que = rSet.createQueue(records, i, records.length);
 
             MatrixEnhanced matrix = new MatrixEnhanced();
@@ -209,17 +224,21 @@ public class SetCreatorEnhanced extends SetCreator {
      */
     private void doAlgorithm(Queue<Record> que, int epochCount, MatrixEnhanced matrix) {
         int epoch = epochCount;
+        //Debug
+        int nonMatchCase = 0;
+        int matchCase = 0;
+
         if (que.isEmpty()) {
             System.out.print("Que is empty");
             System.exit(1);
         }
-        
+
         //Initialize newRegion
         Map<Integer, HashSet<Record>> newRegion = new HashMap<>();
         for (int i = 0; i < 1000; i++) {
             newRegion.put(i, new HashSet<Record>());
         }
-        
+
         Queue<Record> inputQueue = new LinkedList<>(que);
         boolean[] removeFromQue = new boolean[que.size()];
         boolean recordRemoved = false;
@@ -246,7 +265,7 @@ public class SetCreatorEnhanced extends SetCreator {
                 matrix.addRecord(inputRecord);
                 matrix.addWinner(inputRecord, inputRecord.getIntName()); //Update newRegion
                 newRegion.get(inputRecord.getIntName()).add(inputRecord);
-                
+
                 removeFromQue[recNum - 1] = true;
                 recordRemoved = true;
             } else if (count == 1) { //Find which inputRecord it matched, update
@@ -255,13 +274,20 @@ public class SetCreatorEnhanced extends SetCreator {
                 matrix.updateMatrix(inputRecord, index, alpha, name); // Update newRegion
                 newRegion.get(name).add(inputRecord);
             } else if (count > 1) { //Find which inputRecord it matched and matched decision, update
+
+                //debug.add("\n\nCase 3\nCount : " + count);
+                int nonMatches = 0;//Debug
+                int matches = 0;//Debug
+
                 int matchMax = Integer.MIN_VALUE;
                 int nonMatchMax = Integer.MIN_VALUE;
                 Map<Integer, Record> competitors = new HashMap<>();
                 for (int index = 0; index < neighbors.length; index++) {
-                    if (neighbors[index] 
+                    if (neighbors[index]
                             && matrix.getRecord(index).hasSameDecision(inputRecord)) {
-                        
+
+                        matches++;//Debug
+
                         int temp = newRegion.get(index).size();
                         if (matchMax < temp) {
                             competitors.clear();
@@ -269,10 +295,12 @@ public class SetCreatorEnhanced extends SetCreator {
                         } else if (matchMax == temp) {
                             competitors.put(index, matrix.getRecord(index));
                         }
-                    } else if(neighbors[index] 
-                            && !(matrix.getRecord(index).hasSameDecision(inputRecord)) 
+                    } else if (neighbors[index]
+                            && !(matrix.getRecord(index).hasSameDecision(inputRecord))
                             && (matchMax == Integer.MIN_VALUE)) {
-                        
+
+                        nonMatches++;//Debug
+
                         int temp = newRegion.get(index).size();
                         if (nonMatchMax < temp) {
                             competitors.clear();
@@ -282,8 +310,17 @@ public class SetCreatorEnhanced extends SetCreator {
                         }
                     }
                 }
-                
-                if(!competitors.isEmpty()) {
+
+                //Debug
+                if (matches > 0) {
+                    matchCase++;
+                    //debug.add("\nMatching decision found : " + matches);
+                } else {
+                    nonMatchCase++;
+                    //debug.add("\nNo matching decision found : " + nonMatches);
+                }
+
+                if (!competitors.isEmpty()) {
                     Random random = new Random();
                     List<Integer> keys = new ArrayList<>(competitors.keySet());
                     int randomKey = keys.get(random.nextInt(keys.size()));
@@ -297,6 +334,12 @@ public class SetCreatorEnhanced extends SetCreator {
             recNum++;
         }
         
+        debug.add(String.format(table, epoch,
+                                       matchCase,
+                                       nonMatchCase,
+                                       (matchCase + nonMatchCase)
+        ));
+
         matrix.addToRegions(newRegion);
         // If the epoch is at an interval of 10% of the original epoch
         // the update alpha
@@ -310,6 +353,11 @@ public class SetCreatorEnhanced extends SetCreator {
             doAlgorithm(rSet.removeRecords(que, removeFromQue), epoch, matrix);
         } else if (epoch != 0) {
             doAlgorithm(que, epoch, matrix);
+        }
+        
+        if(epoch == 0) {
+            debug.add("\n");
+            initDebug();
         }
     }
 
@@ -328,6 +376,40 @@ public class SetCreatorEnhanced extends SetCreator {
             return index;
         }
         return index;
+    }
+
+    private void initDebug() {
+        debug.add(String.format(table, "Epoch","Match","NonMatch","Total"));
+        debug.add(line);
+    }
+
+    private void debuggingFile() {
+        String name = "debug";
+        File output = new File(name + 1 + ".txt");
+        try {
+            int i = 1;
+            while (output.exists()) {
+                output = new File(name + i++ + ".txt");
+            }
+            output.createNewFile();
+
+        } catch (IOException ex) {
+            System.out.print("Can't find directory");
+            System.exit(1);
+        }
+
+        try (PrintWriter write = new PrintWriter(output)) {
+
+            write.flush();
+            for (String str : debug) {
+                write.write(str);
+            }
+            write.close();
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Output file not found.");
+            System.exit(1);
+        }
     }
 
 }

@@ -190,6 +190,16 @@ public class MatrixEnhanced extends Matrix {
      * aren't in the matrix.
      */
     private void cleanMatrix() {
+        //Remove outputs with certainty factors less than 2/3s
+        for(int i = 0; i < getSize(); i++) {
+            if(this.recordSet[i].getDoubleCertaintyFactor() 
+                    < (2.0/3.0)*100 + 1) {
+                    //< 70) {
+                removeRecord(i);
+                i--;
+            }
+        }
+        
         for (int i = 0; i < getSize(); i++) {
             if (this.certaintyFactors.get(recordSet[i].getIntName()).isEmpty()
                     && this.regions.get(recordSet[i].getIntName()).isEmpty()) {
@@ -207,7 +217,9 @@ public class MatrixEnhanced extends Matrix {
                 }
             }
         }
-
+        
+        
+        
     }
 
     /**
