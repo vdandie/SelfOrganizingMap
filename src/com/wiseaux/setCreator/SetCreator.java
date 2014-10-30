@@ -43,7 +43,7 @@ public class SetCreator extends AbstractSetCreator {
                         neighborhoods = Integer.parseInt(split[1]);
                         break;
                     case "alpha":
-                        alpha = Double.parseDouble(split[1]);
+                        setAlpha(Double.parseDouble(split[1])); //sets Alpha and ogAlpha
                         break;
                     case "beta":
                         beta = Double.parseDouble(split[1]);

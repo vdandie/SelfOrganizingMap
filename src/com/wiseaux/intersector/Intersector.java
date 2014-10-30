@@ -52,7 +52,7 @@ public class Intersector {
      * String formats.
      */
     String tableFormat = "%-10s | %-7s | %-7s |";
-    String line = "-------------------------------";
+    String tableLine = "-------------------------------";
     
     /**
      * Overall
@@ -110,10 +110,10 @@ public class Intersector {
             runAlgorithm(i);
         }
         
-        overall = "\n" + String.format(tableFormat, " ", "1", "0") + "\n" + line
+        overall = "\n" + String.format(tableFormat, " ", "1", "0") + "\n" + tableLine
                 + "\n" + String.format(tableFormat, "1", col.truePos, col.falsePos)
                 + "\n" + String.format(tableFormat, "0",  col.falseNeg, col.trueNeg)
-                + "\n" + line
+                + "\n" + tableLine
                 + "\n" + String.format(tableFormat, " ",
                         col.truePos+ "/" + (col.falseNeg+col.truePos),
                         col.trueNeg+"/"+(col.trueNeg+col.falsePos))
@@ -122,7 +122,7 @@ public class Intersector {
                                 ((double)col.truePos / ((double)col.falseNeg + col.truePos))),
                         String.format("%.2f", 
                                 ((double)col.trueNeg) / ((double)col.trueNeg + col.falsePos)))
-                + "\n" + line
+                + "\n" + tableLine
                 + "\n" + "Total Not Predictable : " + col.notPredictable
         ;
     }
@@ -148,10 +148,10 @@ public class Intersector {
             runAlgorithm(i);
         }
         
-        overall = "\n" + String.format(tableFormat, " ", "1", "0") + "\n" + line
+        overall = "\n" + String.format(tableFormat, " ", "1", "0") + "\n" + tableLine
                 + "\n" + String.format(tableFormat, "1", col.truePos, col.falsePos)
                 + "\n" + String.format(tableFormat, "0",  col.falseNeg, col.trueNeg)
-                + "\n" + line
+                + "\n" + tableLine
                 + "\n" + String.format(tableFormat, " ",
                         col.truePos+ "/" + (col.falseNeg+col.truePos),
                         col.trueNeg+"/"+(col.trueNeg+col.falsePos))
@@ -160,7 +160,7 @@ public class Intersector {
                                 ((double)col.truePos / ((double)col.falseNeg + col.truePos))),
                         String.format("%.2f", 
                                 ((double)col.trueNeg) / ((double)col.trueNeg + col.falsePos)))
-                + "\n" + line
+                + "\n" + tableLine
                 + "\n" + "Total Not Predictable : " + col.notPredictable
         ;
     }
@@ -260,14 +260,14 @@ public class Intersector {
         }
 
         //True/False Pos/Neg table
-        result.add(String.format(tableFormat, " ", "1", "0") + "\n" + line
+        result.add(String.format(tableFormat, " ", "1", "0") + "\n" + tableLine
                 + "\n" + String.format(tableFormat, "1", truePos, falsePos)
                 + "\n" + String.format(tableFormat, "0", falseNeg, trueNeg)
-                + "\n" + line
+                + "\n" + tableLine
                 + "\n" + String.format(tableFormat, " ",
                         truePos +  "/" + (truePos+falseNeg),
                         trueNeg +  "/" + (trueNeg+falsePos))
-                + "\n" + line
+                + "\n" + tableLine
         );
         
         // Collect all of true/false pos/neg information
@@ -286,7 +286,9 @@ public class Intersector {
                 + "\n"
         );
 
-        averages.add(((double) count / ((double) outerCount + (double) notPred)));
+        averages.add(((double) count / ((double) outerCount 
+                //+ (double) notPred
+                )));
 
         //System.out.println(count + " " + testQueue.size());
         results[setNumber] = result;
