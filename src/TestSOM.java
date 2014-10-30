@@ -14,15 +14,15 @@ public class TestSOM {
         Intersector thing = new Intersector();
 //        som.run();
 //        som.train(10);
-        thing.read(10);
-        thing.run();
-        thing.resultsToFile("result");
-        thing.totalResultsFile();
+//        thing.read(10);
+//        thing.run();
+//        thing.resultsToFile("result");
+//        thing.totalResultsFile();
 //        som.runForSpecialSet();
 //        som.trainAllButOneRecord();
-//        thing.readSpecialCase();
-//        thing.run_2();
-//        thing.specialTotalResultsFile();
+        thing.readSpecialCase();
+        thing.run_2();
+        thing.specialTotalResultsFile();
         
     }
         

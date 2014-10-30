@@ -75,6 +75,7 @@ public class Matrix extends AbstractSetCreator {
                     seed.getAttribute(i), alpha);       //Calculate new values
             update.setAttribute(i, newValue);           //Set the value
         }
+        update.setAttribute(update.getSize()-1, seed.getDecision());
         updateRecord(update, winnerIndex);              //Put record into matrix at index
     }
 

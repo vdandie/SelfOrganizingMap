@@ -32,12 +32,12 @@ public class Intersector {
      * Holds results for each of the runs.
      */
     ArrayList[] results;
-    
+
     /**
      * Holds the true/false pos/neg values throughout the tests.
      */
     Collective col;
-    
+
     /**
      * Holds the average results
      */
@@ -47,13 +47,13 @@ public class Intersector {
      * Number of files to go through.
      */
     protected int times;
-    
+
     /**
      * String formats.
      */
     String tableFormat = "%-10s | %-7s | %-7s |";
     String tableLine = "-------------------------------";
-    
+
     /**
      * Overall
      */
@@ -72,20 +72,20 @@ public class Intersector {
      */
     public void read(int fileNumber) {
         times = fileNumber;
-        
+
         for (int i = 0; i < fileNumber; i++) {
             readTrainingSetFile(i + 1);
             readTestSetFile(i + 1);
         }
     }
-    
+
     public void readSpecialCase() {
         times = 427;
         testSets = new Queue[times + 1];
         trainingSets = new Queue[times + 1];
         results = new ArrayList[times + 1];
         readSpecialTestSetFile();
-        for(int i = 1; i < times; i++) {
+        for (int i = 1; i < times; i++) {
             readTrainingSetFile(i);
         }
     }
@@ -109,25 +109,23 @@ public class Intersector {
             }
             runAlgorithm(i);
         }
-        
+
         overall = "\n" + String.format(tableFormat, " ", "1", "0") + "\n" + tableLine
                 + "\n" + String.format(tableFormat, "1", col.truePos, col.falsePos)
-                + "\n" + String.format(tableFormat, "0",  col.falseNeg, col.trueNeg)
+                + "\n" + String.format(tableFormat, "0", col.falseNeg, col.trueNeg)
                 + "\n" + tableLine
                 + "\n" + String.format(tableFormat, " ",
-                        col.truePos+ "/" + (col.falseNeg+col.truePos),
-                        col.trueNeg+"/"+(col.trueNeg+col.falsePos))
+                        col.truePos + "/" + (col.falseNeg + col.truePos),
+                        col.trueNeg + "/" + (col.trueNeg + col.falsePos))
                 + "\n" + String.format(tableFormat, " ",
                         String.format("%.2f",
-                                ((double)col.truePos / ((double)col.falseNeg + col.truePos))),
-                        String.format("%.2f", 
-                                ((double)col.trueNeg) / ((double)col.trueNeg + col.falsePos)))
+                                ((double) col.truePos / ((double) col.falseNeg + col.truePos))),
+                        String.format("%.2f",
+                                ((double) col.trueNeg) / ((double) col.trueNeg + col.falsePos)))
                 + "\n" + tableLine
-                + "\n" + "Total Not Predictable : " + col.notPredictable
-        ;
+                + "\n" + "Total Not Predictable : " + col.notPredictable;
     }
 
-    
     /**
      * Runs the tests for the k-1 case
      */
@@ -147,24 +145,23 @@ public class Intersector {
             }
             runAlgorithm(i);
         }
-        
+
         overall = "\n" + String.format(tableFormat, " ", "1", "0") + "\n" + tableLine
                 + "\n" + String.format(tableFormat, "1", col.truePos, col.falsePos)
-                + "\n" + String.format(tableFormat, "0",  col.falseNeg, col.trueNeg)
+                + "\n" + String.format(tableFormat, "0", col.falseNeg, col.trueNeg)
                 + "\n" + tableLine
                 + "\n" + String.format(tableFormat, " ",
-                        col.truePos+ "/" + (col.falseNeg+col.truePos),
-                        col.trueNeg+"/"+(col.trueNeg+col.falsePos))
+                        col.truePos + "/" + (col.falseNeg + col.truePos),
+                        col.trueNeg + "/" + (col.trueNeg + col.falsePos))
                 + "\n" + String.format(tableFormat, " ",
                         String.format("%.2f",
-                                ((double)col.truePos / ((double)col.falseNeg + col.truePos))),
-                        String.format("%.2f", 
-                                ((double)col.trueNeg) / ((double)col.trueNeg + col.falsePos)))
+                                ((double) col.truePos / ((double) col.falseNeg + col.truePos))),
+                        String.format("%.2f",
+                                ((double) col.trueNeg) / ((double) col.trueNeg + col.falsePos)))
                 + "\n" + tableLine
-                + "\n" + "Total Not Predictable : " + col.notPredictable
-        ;
+                + "\n" + "Total Not Predictable : " + col.notPredictable;
     }
-    
+
     /**
      * Sends the test set record at the given training set.
      */
@@ -178,12 +175,12 @@ public class Intersector {
 
         int count = 0, outerCount = 0;
         double temp;
-        
+
         for (Record test : testQueue) {
-            
+
             double min = Double.MAX_VALUE;
             boolean match;
-            
+
             ArrayList<Competitor> comp = new ArrayList<>();
             for (Record rule : trainingQueue) { //For each test, send it against every rule
                 //and get the sumAbsDif. 
@@ -191,26 +188,26 @@ public class Intersector {
                 if (temp < min) {
                     min = temp;
                     comp.clear(); //New minimum found, remove all
-                    
+
                     match = test.hasSameDecision(rule);
-                    comp.add(new Competitor(min,rule, match));
-                } else if(temp == min) {
+                    comp.add(new Competitor(min, rule, match));
+                } else if (temp == min) {
                     match = test.hasSameDecision(rule);
-                    comp.add(new Competitor(min,rule, match));
+                    comp.add(new Competitor(min, rule, match));
                 }
             }
-            
+
             boolean predictable = true;
             if (comp.size() > 1) {
                 int dec0 = 0, dec1 = 0;
-                for(Competitor dec : comp) {
-                    if(dec.dec == 0) {
+                for (Competitor dec : comp) {
+                    if (dec.dec == 0) {
                         dec0++;
                     } else {
                         dec1++;
                     }
                 }
-                
+
                 if (dec0 > dec1) { //Take the dominant decision
                     comp.get(0).dec = 0;
                     comp.get(0).match = comp.get(0).dec == test.getDecision();
@@ -220,8 +217,8 @@ public class Intersector {
                 } else if (dec0 == dec1) { //If no dominant decision, not predictable
                     predictable = false;
                 }
-            } 
-            
+            }
+
             if (comp.get(0).match && predictable) { // Matched and predictable
                 count++;
                 outerCount++;
@@ -265,11 +262,11 @@ public class Intersector {
                 + "\n" + String.format(tableFormat, "0", falseNeg, trueNeg)
                 + "\n" + tableLine
                 + "\n" + String.format(tableFormat, " ",
-                        truePos +  "/" + (truePos+falseNeg),
-                        trueNeg +  "/" + (trueNeg+falsePos))
+                        truePos + "/" + (truePos + falseNeg),
+                        trueNeg + "/" + (trueNeg + falsePos))
                 + "\n" + tableLine
         );
-        
+
         // Collect all of true/false pos/neg information
         col.falsePos += falsePos;
         col.falseNeg += falseNeg;
@@ -280,16 +277,17 @@ public class Intersector {
         result.add("\nOverall Match percentage:  "
                 + String.format("%.2f", ((double) count / (double) outerCount) * 100)
                 + "|  # Matched " + count
-                + "|  # Not Matched " + (outerCount-count)
+                + "|  # Not Matched " + (outerCount - count)
                 + "|  # Not Predicted " + notPred
                 + "|  Total : " + testQueue.size()
                 + "\n"
         );
-
-        averages.add(((double) count / ((double) outerCount 
-                //+ (double) notPred
-                )));
-
+        if (count != 0 && outerCount != 0) {
+            averages.add(((double) count / ((double) outerCount //+ (double) notPred
+                    )));
+        } else {
+            averages.add(0.0);
+        }
         //System.out.println(count + " " + testQueue.size());
         results[setNumber] = result;
     }
@@ -400,7 +398,6 @@ public class Intersector {
         }
     }
 
-    
     /**
      * Reads the testSet file
      */
@@ -408,13 +405,13 @@ public class Intersector {
         try (Scanner input = new Scanner(new File("testSets\\specialTestSet1.txt"))) {
             Queue<Record> newQueue;
             int index = 0;
-            
+
             String name = "", decision = "";
             ArrayList<Double> attributes = new ArrayList<>();
 
             while (input.hasNext()) {
                 newQueue = new LinkedList<>();
-                
+
                 String line = input.nextLine();
 
                 String[] values = line.split(" ");
@@ -452,7 +449,7 @@ public class Intersector {
             System.exit(1);
         }
     }
-    
+
     /**
      * Prints the results into a directory.
      */
@@ -539,8 +536,7 @@ public class Intersector {
         }
 
     }
-    
-    
+
     /**
      * Prints an overall.txt that has overall results for all results
      */
@@ -611,9 +607,9 @@ class Competitor {
 }
 
 class Collective {
-    
+
     int falsePos, falseNeg, truePos, trueNeg, notPredictable;
-    
+
     Collective() {
         falsePos = falseNeg = truePos = trueNeg = notPredictable = 0;
     }

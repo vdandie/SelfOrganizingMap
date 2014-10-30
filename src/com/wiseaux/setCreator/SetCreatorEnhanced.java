@@ -119,7 +119,7 @@ public class SetCreatorEnhanced extends SetCreator {
         new File("trainingSets").mkdir();
         shootRecords(trainingSet, numOfSets, matrices);
 
-        debuggingFile();
+        //debuggingFile();
 
     }
 
