@@ -18,12 +18,11 @@ public class TestSOM {
 //        thing.run();
 //        thing.resultsToFile("result");
 //        thing.totalResultsFile();
-//        som.runForSpecialSet();
-//        som.trainAllButOneRecord();
+        som.runForSpecialSet();
+        som.trainAllButOneRecord();
         thing.readSpecialCase();
         thing.run_2();
         thing.specialTotalResultsFile();
-        
     }
         
 }

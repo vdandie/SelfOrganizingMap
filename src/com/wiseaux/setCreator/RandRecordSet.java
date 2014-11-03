@@ -313,7 +313,8 @@ public class RandRecordSet {
         return value_1.intValue();
 
     }
-
+    
+    
     public void printQue(Queue<Record> que, String name) {
         String print = "";
 
@@ -324,6 +325,39 @@ public class RandRecordSet {
             } else if (record.getName() != null) {
                 print += record.getName() + "\t " + record.printRecord() + "\n";
             }
+        }
+
+        File output = new File(name + 1 + ".txt");
+        try {
+
+            int i = 1;
+            while (output.exists()) {
+                output = new File(name + (i++) + ".txt");
+            }
+            output.createNewFile();
+
+        } catch (IOException ex) {
+            System.out.print(ex);
+            System.exit(1);
+        }
+
+        try (PrintWriter write = new PrintWriter(output)) {
+
+            write.flush();
+            write.write(print);
+            write.close();
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Output file not found.");
+            System.exit(1);
+        }
+    }
+
+    public void print(Queue<Record> que, String name) {
+        String print = "";
+
+        for (Record record : que) {
+            print += record.print() + "\n";
         }
 
         File output = new File(name + 1 + ".txt");

@@ -157,7 +157,7 @@ public class SetCreatorEnhanced extends SetCreator {
                 System.out.println("There are no records to send!");
                 System.exit(1);
             }
-            rSet.printQue(que, "trainingSets\\origTrainingSet");
+            rSet.print(que, "trainingSets\\original");
             doAlgorithm(que, epochs, matrix);
             matrix.combineRegions();
             matrix.checkForDuplicates();
@@ -205,7 +205,7 @@ public class SetCreatorEnhanced extends SetCreator {
                 System.out.println("There are no records to send!");
                 System.exit(1);
             }
-            rSet.printQue(que, "trainingSets\\origTrainingSet");
+            rSet.print(que, "trainingSets\\original");
             doAlgorithm(que, epochs, matrix);
             matrix.combineRegions();
             matrix.checkForDuplicates();

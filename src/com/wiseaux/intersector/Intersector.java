@@ -42,6 +42,11 @@ public class Intersector {
      * Holds the average results
      */
     ArrayList<Double> averages;
+    
+    /**
+     * Holds the average non predictable
+     */
+    ArrayList<Double> avgNonPred;
 
     /**
      * Number of files to go through.
@@ -64,6 +69,7 @@ public class Intersector {
         trainingSets = new Queue[11];
         results = new ArrayList[11];
         averages = new ArrayList<>();
+        avgNonPred = new ArrayList<>();
         col = new Collective();
     }
 
@@ -285,6 +291,7 @@ public class Intersector {
         if (count != 0 && outerCount != 0) {
             averages.add(((double) count / ((double) outerCount //+ (double) notPred
                     )));
+            avgNonPred.add((double)notPred);
         } else {
             averages.add(0.0);
         }
@@ -308,7 +315,7 @@ public class Intersector {
         return sum;
     }
 
-    double calcAvg() {
+    double calcAvg(ArrayList<Double> averages) {
         double avg = 0;
         for (double dub : averages) {
             avg += dub;
@@ -526,7 +533,10 @@ public class Intersector {
                 write.write(line.get(line.size() - 1));
             }
             write.write("\n\nTotal average match percentage: "
-                    + String.format("%.2f", calcAvg() * 100) + "%");
+                    + String.format("%.2f", calcAvg(averages) * 100) + "%");
+            
+            write.write("\n\nAverage # of Not Predictable: "
+                    + String.format("%.2f", calcAvg(avgNonPred)));
             write.write(overall);
             write.close();
 
@@ -572,7 +582,10 @@ public class Intersector {
                 write.write(line.get(line.size() - 1));
             }
             write.write("\n\nTotal average match percentage: "
-                    + String.format("%.2f", calcAvg() * 100) + "%");
+                    + String.format("%.2f", calcAvg(averages) * 100) + "%");
+            
+            write.write("\n\nAverage # of Not Predictable: "
+                    + String.format("%.2f", calcAvg(avgNonPred)));
             write.write(overall);
             write.close();
 
